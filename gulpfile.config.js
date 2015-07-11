@@ -1,7 +1,8 @@
 ﻿var tsjsmapjsSuffix = ".{ts,js.map,js}";
 
 var bower = "bower_components/";
-var app = "src/app/";
+var src = "src/";
+var app = src + "app/";
 
 var config = {
 
@@ -17,7 +18,7 @@ var config = {
     // The fonts we want Gulp to process
     fonts: [bower + "fontawesome/fonts/*.*"],
 
-    images: app + "images/**/*.{gif,jpg,png}",
+    images: src + "images/**/*.{gif,jpg,png}",
 
     // The scripts we want Gulp to process
     scripts: [
@@ -50,10 +51,11 @@ var config = {
 
     // The styles we want Gulp to process
     styles: [
-        app + "styles/styles.less"
+        src + "styles/styles.less"
     ],
 
     wiredepOptions: {
+        //cwd: "build",
         exclude: [/jquery/],
         ignorePath: ".."
     }

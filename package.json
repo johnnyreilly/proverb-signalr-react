@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "bower-install": "gulp bower-install",
     "build-debug": "gulp build-debug",
-    "build-release": "gulp build-release"
+    "build-release": "gulp build-release",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -41,5 +42,7 @@
     "wiredep": "^2.2.2",
     "yargs": "^3.6.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.13.1"
+  }
 }

@@ -16,6 +16,7 @@ var order = require("gulp-order");
 var gulpUtil = require("gulp-util");
 var wiredep = require("wiredep");
 var inject = require("gulp-inject");
+var print = require("gulp-print");
 //var yargs = require("yargs").argv;
 
 // Get our config
@@ -90,7 +91,7 @@ gulp.task("boot-dependencies", ["clean"], function () {
     gulpUtil.log("Get dependencies needed for boot (jQuery and images)");
 
     var jQuery = gulp.src(config.bootjQuery);
-    var images = gulp.src(config.images, { base: config.base });
+    var images = gulp.src(config.images, { base: config.base }); // THE base looks wrong
 
     var combined = eventStream.merge(jQuery, images)
         .pipe(gulp.dest(config.buildDir));
@@ -111,8 +112,9 @@ gulp.task("inject-debug", ["styles-debug", "scripts-debug"], function () {
                         config.debugFolder + "**/*.{js,css}",
                         "!build\\debug\\bower_components\\spin.js" // Exclude weird spin js path
                     ], { read: false })
-                    .pipe(order(scriptsAndStyles))
-            ))
+                    .pipe(order(scriptsAndStyles)),
+              { ignorePath: "/build/" })
+        )
         .pipe(gulp.dest(config.buildDir));
 });
 
@@ -152,12 +154,16 @@ gulp.task("styles-debug", ["clean"], function () {
 
     var bowerCss = gulp.src(getStyles(), { base: config.base });
 
+    gulpUtil.log("config.styles: " + config.styles);
+
     var appCss = gulp.src(config.styles)
+        .pipe(print())
         .pipe(sourcemaps.init())
         .pipe(less())
         .pipe(sourcemaps.write());
 
     return eventStream.merge(bowerCss, appCss)
+        .pipe(print())
         .pipe(gulp.dest(config.debugFolder));
 });
 

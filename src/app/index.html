@@ -44,9 +44,15 @@
         (function () {
 
             // Load startup data from the server
-            $.getJSON("api/Startup")
-                .done(function (startUpData) {
-
+            // $.getJSON("http://proverb.azurewebsites.net/api/Startup")
+            //     .done(function (startUpData) {
+var startUpData = {
+    appName: "Proverb",
+    appRoot: "/",
+    inDebug: true,
+    remoteServiceRoot: "http://proverb.azurewebsites.net/api/",
+    version: "1"
+}
                     angularApp.start({
                         thirdPartyLibs: {
                             moment: window.moment,
@@ -55,7 +61,7 @@
                         },
                         appConfig: startUpData
                     });
-                });
+                // });
         })();
     </script>
 </body>
