@@ -7,7 +7,7 @@ git config --global push.default matching
 
 Write-Host "- Copy contents of build folder into a static-site folder...."
 md ..\static-site
-copy-item -path .\build\* -Destination ..\static-site\* -Recurse
+copy-item -path .\build\* -Destination ..\static-site -Recurse
 
 Write-Host "- Clone gh-pages branch...."
 cd "$($buildFolder)\..\"
