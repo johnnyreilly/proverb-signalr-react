@@ -111,12 +111,12 @@ gulp.task("inject-debug", ["styles-debug", "scripts-debug"], function () {
     return gulp
         .src(config.bootFile)
         .pipe(inject(
-                gulp.src([
-                        config.debugFolder + "**/*.{js,css}",
-                        "!build\\debug\\bower_components\\spin.js" // Exclude weird spin js path
-                    ], { read: false })
-                    .pipe(order(scriptsAndStyles)),
-              { ignorePath: "/build/" })
+                  gulp.src([
+                          config.debugFolder + "**/*.{js,css}",
+                          "!build\\debug\\bower_components\\spin.js" // Exclude weird spin js path
+                      ], { read: false })
+                      .pipe(order(scriptsAndStyles)),
+                  { ignorePath: "/build/" })
         )
         .pipe(gulp.dest(config.buildDir));
 });
@@ -127,7 +127,10 @@ gulp.task("inject-release", ["styles-release", "scripts-release"], function () {
 
     return gulp
         .src(config.bootFile)
-        .pipe(inject(gulp.src(config.releaseFolder + "**/*.{js,css}", { read: false }), { removeTags: true }))
+        .pipe(inject(
+                  gulp.src(config.releaseFolder + "**/*.{js,css}", { read: false }),
+                  { ignorePath: "/build/", removeTags: true })
+        )
         .pipe(gulp.dest(config.buildDir));
 });
 
