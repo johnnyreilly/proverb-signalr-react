@@ -72,7 +72,7 @@ function getScriptsAndTemplates(isDebug) {
 
     //Get the view templates for $templateCache
     var templates = gulp.src(config.templateFiles)
-        .pipe(templateCache({ module: "app", root: "app/" }));
+        .pipe(templateCache({ module: "app"/*, root: "app/"*/ }));
 
     var combined = eventStream.merge(appScripts, templates);
 
@@ -83,20 +83,23 @@ gulp.task("clean", function (cb) {
 
     gulpUtil.log("Delete the build folder");
 
-    return del([config.buildDir], cb);
+    return del([config.buildDir], { force: true }, cb);
 });
 
 gulp.task("boot-dependencies", ["clean"], function () {
 
-    gulpUtil.log("Get dependencies needed for boot (jQuery and images)");
+    gulpUtil.log("Get dependencies needed for boot (jQuery)");
 
-    var jQuery = gulp.src(config.bootjQuery);
-    var images = gulp.src(config.images, { base: config.base }); // THE base looks wrong
+    return gulp.src(config.bootjQuery)
+      .pipe(gulp.dest(config.buildDir));
+});
 
-    var combined = eventStream.merge(jQuery, images)
-        .pipe(gulp.dest(config.buildDir));
+gulp.task("images", ["clean"], function () {
 
-    return combined;
+    gulpUtil.log("Get images");
+
+    return gulp.src(config.images/*, { base: config.base }*/) // THE base looks wrong
+        .pipe(gulp.dest(config.buildDir + "images"));
 });
 
 gulp.task("inject-debug", ["styles-debug", "scripts-debug"], function () {
@@ -154,16 +157,16 @@ gulp.task("styles-debug", ["clean"], function () {
 
     var bowerCss = gulp.src(getStyles(), { base: config.base });
 
-    gulpUtil.log("config.styles: " + config.styles);
+    //gulpUtil.log("config.styles: " + config.styles);
 
     var appCss = gulp.src(config.styles)
-        .pipe(print())
+        // .pipe(print())
         .pipe(sourcemaps.init())
         .pipe(less())
         .pipe(sourcemaps.write());
 
     return eventStream.merge(bowerCss, appCss)
-        .pipe(print())
+        // .pipe(print())
         .pipe(gulp.dest(config.debugFolder));
 });
 
@@ -200,11 +203,11 @@ gulp.task("fonts-release", ["clean"], function () {
 });
 
 gulp.task("build-debug", [
-    "boot-dependencies", "inject-debug", "fonts-debug"
+    "boot-dependencies", "images", "inject-debug", "fonts-debug"
 ]);
 
 gulp.task("build-release", [
-    "boot-dependencies", "inject-release", "fonts-release"
+    "boot-dependencies", "images", "inject-release", "fonts-release"
 ]);
 
 gulp.task("bower-install", function() {

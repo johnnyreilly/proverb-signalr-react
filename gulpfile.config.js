@@ -12,7 +12,7 @@ var config = {
     release: "release",
     css: "css",
 
-    bootFile: app + "index.html",
+    bootFile: src + "index.html",
     bootjQuery: bower + "jquery/dist/jquery.min.js",
 
     // The fonts we want Gulp to process
@@ -55,7 +55,6 @@ var config = {
     ],
 
     wiredepOptions: {
-        //cwd: "build",
         exclude: [/jquery/],
         ignorePath: ".."
     }
