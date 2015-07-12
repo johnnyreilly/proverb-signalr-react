@@ -44,8 +44,8 @@
         (function () {
 
             // Load startup data from the server
-            // $.getJSON("http://proverb.azurewebsites.net/api/Startup")
-            $.getJSON("http://localhost:7778/Startup")
+            $.getJSON("http://proverb.azurewebsites.net/api/Startup")
+            // $.getJSON("http://localhost:7778/Startup")
                 .done(function (startUpData) {
                     angularApp.start({
                         thirdPartyLibs: {
