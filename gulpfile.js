@@ -72,7 +72,7 @@ function getScriptsAndTemplates(isDebug) {
 
     //Get the view templates for $templateCache
     var templates = gulp.src(config.templateFiles)
-        .pipe(templateCache({ module: "app"/*, root: "app/"*/ }));
+        .pipe(templateCache({ module: "app", root: "app/" }));
 
     var combined = eventStream.merge(appScripts, templates);
 
