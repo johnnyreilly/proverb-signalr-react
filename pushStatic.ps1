@@ -1,4 +1,4 @@
-param([string]$buildFolder, [string]$email, [string]$username, [string]$personalAccessToken)
+param([string]$buildFolder, [string]$email, [string]$username, [string]$personalAccessToken, [string]$repoName)
 
 Write-Host "- Set config settings...."
 git config --global user.email $email
@@ -8,7 +8,7 @@ git config --global push.default matching
 Write-Host "- Clone gh-pages branch...."
 cd "$($buildFolder)\..\"
 mkdir gh-pages
-git clone --quiet --branch=gh-pages https://$($username):$($personalAccessToken)@github.com/johnnyreilly/jQuery.Validation.Unobtrusive.Native.git .\gh-pages\
+git clone --quiet --branch=gh-pages https://$($username):$($personalAccessToken)@github.com/$($repoName) .\gh-pages\
 cd gh-pages
 git status
 
@@ -20,7 +20,7 @@ copy-item -path ..\static-site\* -Destination $pwd.Path -Recurse
 
 git status
 $thereAreChanges = git status | select-string -pattern "Changes not staged for commit:","Untracked files:" -simplematch
-if ($thereAreChanges -ne $null) { 
+if ($thereAreChanges -ne $null) {
     Write-host "- Committing changes to documentation..."
     git add --all
     git status
@@ -29,7 +29,7 @@ if ($thereAreChanges -ne $null) {
     Write-Host "- Push it...."
     git push --quiet
     Write-Host "- Pushed it good!"
-} 
-else { 
+}
+else {
     write-host "- No changes to documentation to commit"
 }
