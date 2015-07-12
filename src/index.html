@@ -14,7 +14,7 @@
     <!-- inject:css -->
     <!-- endinject -->
 
-    <link rel="icon" type="image/png" href="build/images/icon.png">
+    <link rel="icon" type="image/png" href="images/icon.png">
 </head>
 <body>
     <div>
@@ -44,7 +44,7 @@
         (function () {
 
             // Load startup data from the server
-            $.getJSON("http://proverb.azurewebsites.net/api/Startup")
+            $.getJSON("http://proverb.azurewebsites.net/Startup")
             // $.getJSON("http://localhost:7778/Startup")
                 .done(function (startUpData) {
                     angularApp.start({
