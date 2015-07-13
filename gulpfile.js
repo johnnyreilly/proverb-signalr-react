@@ -129,7 +129,7 @@ gulp.task("inject-release", ["styles-release", "scripts-release"], function () {
         .src(config.bootFile)
         .pipe(inject(
                   gulp.src(config.releaseFolder + "**/*.{js,css}", { read: false }),
-                  { ignorePath: "/build/", addPrefix: "proverb-angular", removeTags: true })
+                  { ignorePath: "/build/", addRootSlash: false, removeTags: true })
         )
         .pipe(gulp.dest(config.buildDir));
 });
