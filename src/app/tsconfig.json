@@ -2,7 +2,6 @@
     "compilerOptions": {
         "target": "es5",
         "preserveConstEnums": true,
-        "noEmitOnError": true,
         "noImplicitAny": true,
         "removeComments": false,
         "sourceMap": true,
