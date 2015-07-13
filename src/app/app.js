@@ -3,12 +3,15 @@ var angularApp = (function () {
     var appName = "app";
     // Create Angular "app" module so all modules that depend on it use it
     var app = angular.module(appName, [
+        // Angular modules
         "ngAnimate",
         "ngRoute",
         "ngSanitize",
+        // Custom modules
         "common",
         "common.bootstrap",
-        "ui.bootstrap"
+        // 3rd Party Modules
+        "ui.bootstrap" // ui-bootstrap (ex: carousel, pagination, dialog)
     ]);
     return {
         start: start
@@ -52,16 +55,16 @@ var angularApp = (function () {
         };
         app.value("config", config);
         app.config(["$logProvider", function ($logProvider) {
-            // turn debugging off/on (no info or warn)
-            if ($logProvider.debugEnabled) {
-                $logProvider.debugEnabled(config.inDebug);
-            }
-        }]);
+                // turn debugging off/on (no info or warn)
+                if ($logProvider.debugEnabled) {
+                    $logProvider.debugEnabled(config.inDebug);
+                }
+            }]);
         // Copy across config settings to commonConfigProvider to configure the common services
         app.config(["commonConfigProvider", function (commonConfigProvider) {
-            // Copy events across from config.events
-            commonConfigProvider.config.events = _.extend({}, config.events);
-        }]);
+                // Copy events across from config.events
+                commonConfigProvider.config.events = _.extend({}, config.events);
+            }]);
     }
     /**
      * Configure the HTTP Provider
@@ -69,31 +72,31 @@ var angularApp = (function () {
     function configureHttpProvider() {
         var serviceId = "urlInterceptor";
         app.factory(serviceId, ["$templateCache", "config", function ($templateCache, config) {
-            var service = {
-                request: request
-            };
-            return service;
-            function request(requestConfig) {
-                // For the loading of HTML templates we want the appRoot to be prefixed to the path
-                // and we want a suffix to either allow caching or prevent caching
-                // (depending on whether in debug mode or not)
-                if (requestConfig.method === "GET" && endsWith(requestConfig.url.toLowerCase(), ".html")) {
-                    // If this has already been placed into a primed template cache then we should leave the URL as is
-                    // so that the version in templateCache is served.  If we tweak the URL then it will not be found
-                    var cachedAlready = $templateCache.get(requestConfig.url);
-                    if (!cachedAlready) {
-                        requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
+                var service = {
+                    request: request
+                };
+                return service;
+                function request(requestConfig) {
+                    // For the loading of HTML templates we want the appRoot to be prefixed to the path
+                    // and we want a suffix to either allow caching or prevent caching
+                    // (depending on whether in debug mode or not)
+                    if (requestConfig.method === "GET" && endsWith(requestConfig.url.toLowerCase(), ".html")) {
+                        // If this has already been placed into a primed template cache then we should leave the URL as is
+                        // so that the version in templateCache is served.  If we tweak the URL then it will not be found
+                        var cachedAlready = $templateCache.get(requestConfig.url);
+                        if (!cachedAlready) {
+                            requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
+                        }
                     }
+                    return requestConfig;
                 }
-                return requestConfig;
-            }
-            function endsWith(str, suffix) {
-                return str.indexOf(suffix, str.length - suffix.length) !== -1;
-            }
-        }]);
+                function endsWith(str, suffix) {
+                    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+                }
+            }]);
         app.config(["$httpProvider", function ($httpProvider) {
-            $httpProvider.interceptors.push(serviceId);
-        }]);
+                $httpProvider.interceptors.push(serviceId);
+            }]);
     }
     /**
      * Configure the routes and route resolvers
@@ -101,16 +104,16 @@ var angularApp = (function () {
     function configureRoutes() {
         var routesConfigured = false;
         app.config(["$routeProvider", "routes", function ($routeProvider, routes) {
-            // Ensure routes are only configured once (unit tests attempt to configure twice)
-            if (routesConfigured) {
-                return;
-            }
-            routes.forEach(function (r) {
-                $routeProvider.when(r.url, r.config);
-            });
-            $routeProvider.otherwise({ redirectTo: "/" });
-            routesConfigured = true;
-        }]);
+                // Ensure routes are only configured once (unit tests attempt to configure twice)
+                if (routesConfigured) {
+                    return;
+                }
+                routes.forEach(function (r) {
+                    $routeProvider.when(r.url, r.config);
+                });
+                $routeProvider.otherwise({ redirectTo: "/" });
+                routesConfigured = true;
+            }]);
     }
     /**
      * Configure by setting an optional string value for appErrorPrefix.
@@ -118,22 +121,22 @@ var angularApp = (function () {
      */
     function decorateExceptionHandler() {
         app.config(["$provide", function ($provide) {
-            // Extend the $exceptionHandler service to also display a toast.
-            $provide.decorator("$exceptionHandler", ["$delegate", "config", "logger", extendExceptionHandler]);
-            function extendExceptionHandler($delegate, config, logger) {
-                var appErrorPrefix = config.appErrorPrefix;
-                var logError = logger.getLogFn("app", "error");
-                return function (exception, cause) {
-                    $delegate(exception, cause);
-                    if (appErrorPrefix && exception.message.indexOf(appErrorPrefix) === 0) {
-                        return;
-                    }
-                    var errorData = { exception: exception, cause: cause };
-                    var msg = appErrorPrefix + exception.message;
-                    logError(msg, errorData, true);
-                };
-            }
-        }]);
+                // Extend the $exceptionHandler service to also display a toast.
+                $provide.decorator("$exceptionHandler", ["$delegate", "config", "logger", extendExceptionHandler]);
+                function extendExceptionHandler($delegate, config, logger) {
+                    var appErrorPrefix = config.appErrorPrefix;
+                    var logError = logger.getLogFn("app", "error");
+                    return function (exception, cause) {
+                        $delegate(exception, cause);
+                        if (appErrorPrefix && exception.message.indexOf(appErrorPrefix) === 0) {
+                            return;
+                        }
+                        var errorData = { exception: exception, cause: cause };
+                        var msg = appErrorPrefix + exception.message;
+                        logError(msg, errorData, true);
+                    };
+                }
+            }]);
     }
     function initialise(bootstrapper) {
         addThirdPartyLibs(bootstrapper.thirdPartyLibs);
@@ -143,8 +146,8 @@ var angularApp = (function () {
         configureHttpProvider();
         // Handle routing errors and success events
         app.run(["$route", function ($route) {
-            // Include $route to kick start the router.
-        }]);
+                // Include $route to kick start the router.
+            }]);
     }
     /**
      * Initialise and then start the application

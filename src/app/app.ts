@@ -4,7 +4,7 @@ interface bootstrapper {
 }
 
 interface thirdPartyLibs {
-    moment: MomentStatic;
+    moment: moment.MomentStatic;
     toastr: Toastr;
     underscore: UnderscoreStatic;
 }
@@ -40,7 +40,7 @@ var angularApp = (function () {
     "use strict";
 
     var appName = "app";
-    
+
     // Create Angular "app" module so all modules that depend on it use it
     var app = angular.module(appName, [
     // Angular modules
@@ -105,7 +105,7 @@ var angularApp = (function () {
 
         app.value("config", config);
 
-        app.config(["$logProvider", function ($logProvider: ng.ILogProvider) {
+        app.config(["$logProvider", function ($logProvider: angular.ILogProvider) {
             // turn debugging off/on (no info or warn)
             if ($logProvider.debugEnabled) {
                 $logProvider.debugEnabled(config.inDebug);
@@ -126,7 +126,7 @@ var angularApp = (function () {
     function configureHttpProvider() {
 
         var serviceId = "urlInterceptor";
-        app.factory(serviceId, ["$templateCache", "config", function ($templateCache: ng.ITemplateCacheService, config: config) {
+        app.factory(serviceId, ["$templateCache", "config", function ($templateCache: angular.ITemplateCacheService, config: config) {
 
             var service = {
                 request: request
@@ -134,7 +134,7 @@ var angularApp = (function () {
 
             return service;
 
-            function request(requestConfig: ng.IRequestConfig) {
+            function request(requestConfig: angular.IRequestConfig) {
 
                 // For the loading of HTML templates we want the appRoot to be prefixed to the path
                 // and we want a suffix to either allow caching or prevent caching
@@ -147,6 +147,8 @@ var angularApp = (function () {
                     if (!cachedAlready) {
                         requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
                     }
+
+                    let i = 2;
                 }
 
                 return requestConfig;
@@ -157,7 +159,7 @@ var angularApp = (function () {
             }
         }]);
 
-        app.config(["$httpProvider", function ($httpProvider: ng.IHttpProvider) {
+        app.config(["$httpProvider", function ($httpProvider: angular.IHttpProvider) {
             $httpProvider.interceptors.push(serviceId);
         }]);
     }
@@ -168,7 +170,7 @@ var angularApp = (function () {
     function configureRoutes() {
 
         var routesConfigured = false;
-        app.config(["$routeProvider", "routes", function ($routeProvider: ng.route.IRouteProvider, routes: configRoute[]) {
+        app.config(["$routeProvider", "routes", function ($routeProvider: angular.route.IRouteProvider, routes: configRoute[]) {
 
             // Ensure routes are only configured once (unit tests attempt to configure twice)
             if (routesConfigured) { return; }
@@ -189,13 +191,13 @@ var angularApp = (function () {
      */
     function decorateExceptionHandler() {
 
-        app.config(["$provide", function ($provide: ng.auto.IProvideService) {
+        app.config(["$provide", function ($provide: angular.auto.IProvideService) {
 
             // Extend the $exceptionHandler service to also display a toast.
             $provide.decorator("$exceptionHandler",
                 ["$delegate", "config", "logger", extendExceptionHandler]);
 
-            function extendExceptionHandler($delegate: ng.IExceptionHandlerService, config: config, logger: logger.logger) {
+            function extendExceptionHandler($delegate: angular.IExceptionHandlerService, config: config, logger: logger.logger) {
                 var appErrorPrefix = config.appErrorPrefix;
                 var logError = logger.getLogFn("app", "error");
                 return function (exception: Error, cause: string) {
@@ -224,7 +226,7 @@ var angularApp = (function () {
         configureHttpProvider();
 
         // Handle routing errors and success events
-        app.run(["$route", function ($route: ng.route.IRouteService) {
+        app.run(["$route", function ($route: angular.route.IRouteService) {
             // Include $route to kick start the router.
         }]);
     }

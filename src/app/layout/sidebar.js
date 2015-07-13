@@ -6,9 +6,7 @@
         var vm = this;
         vm.isCurrent = isCurrent;
         activate();
-        function activate() {
-            getNavRoutes();
-        }
+        function activate() { getNavRoutes(); }
         function getNavRoutes() {
             vm.navRoutes = routes.filter(function (r) {
                 return (r.config.settings && r.config.settings.nav) ? true : false;

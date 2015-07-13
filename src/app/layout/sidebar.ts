@@ -3,20 +3,20 @@
     navRoutes: configRoute[];
 }
 
-declare module ng.route {
+declare module angular.route {
     //Extend ICurrentRoute to incorporate configRouteConfig
     interface ICurrentRoute extends configRouteConfig {
     }
 }
 
-(function () { 
+(function () {
     "use strict";
-    
+
     var controllerId = "sidebar";
     angular.module("app").controller(controllerId,
         ["$route", "config", "routes", sidebar]);
 
-    function sidebar($route: ng.route.IRouteService, config: config, routes: configRoute[]) {
+    function sidebar($route: angular.route.IRouteService, config: config, routes: configRoute[]) {
         var vm: sidebarVm = this;
 
         vm.isCurrent = isCurrent;
@@ -24,7 +24,7 @@ declare module ng.route {
         activate();
 
         function activate() { getNavRoutes(); }
-        
+
         function getNavRoutes() {
             vm.navRoutes = routes.filter(function(r) {
                 return (r.config.settings && r.config.settings.nav) ? true : false;
@@ -32,7 +32,7 @@ declare module ng.route {
                 return r1.config.settings.nav - r2.config.settings.nav;
             });
         }
-        
+
         function isCurrent(route: configRoute) {
             if (!route.config.title || !$route.current || !$route.current.title) {
                 return "";

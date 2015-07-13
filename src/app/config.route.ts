@@ -3,7 +3,7 @@
     config: configRouteConfig;
 }
 
-interface configRouteConfig extends ng.route.IRoute {
+interface configRouteConfig extends angular.route.IRoute {
     title: string;
     settings: {
         nav?: number;
@@ -19,7 +19,7 @@ interface configRouteConfig extends ng.route.IRoute {
     // Collect the routes
     app.constant("routes", getRoutes());
 
-    // Define the routes 
+    // Define the routes
     function getRoutes(): configRoute[] {
         return [
             {
