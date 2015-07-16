@@ -211,7 +211,7 @@ gulp.task("build-debug", [
 ]);
 
 gulp.task("build-release", [
-    "boot-dependencies", "images", "inject-release", "fonts-release", "test"
+    "boot-dependencies", "images", "inject-release", "fonts-release"//, "test"
 ]);
 
 gulp.task("bower-install", function() {
