@@ -3,6 +3,7 @@
 var bower = "bower_components/";
 var src = "src/";
 var app = src + "app/";
+var tests = "tests/";
 
 var config = {
 
@@ -52,6 +53,13 @@ var config = {
     // The styles we want Gulp to process
     styles: [
         src + "styles/styles.less"
+    ],
+
+    testConfig: tests + "karma.conf.js",
+
+    tests: [
+      tests + "bootstrapper.js",
+      tests + "app/**/*.js"
     ],
 
     wiredepOptions: {

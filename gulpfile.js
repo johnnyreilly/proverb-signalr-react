@@ -17,6 +17,7 @@ var gulpUtil = require("gulp-util");
 var wiredep = require("wiredep");
 var inject = require("gulp-inject");
 var print = require("gulp-print");
+var karma = require('gulp-karma');
 //var yargs = require("yargs").argv;
 
 // Get our config
@@ -206,16 +207,29 @@ gulp.task("fonts-release", ["clean"], function () {
 });
 
 gulp.task("build-debug", [
-    "boot-dependencies", "images", "inject-debug", "fonts-debug"
+    "boot-dependencies", "images", "inject-debug", "fonts-debug", "test"
 ]);
 
 gulp.task("build-release", [
-    "boot-dependencies", "images", "inject-release", "fonts-release"
+    "boot-dependencies", "images", "inject-release", "fonts-release", "test"
 ]);
 
 gulp.task("bower-install", function() {
   var bower = require("gulp-bower");
   return bower();
+});
+
+gulp.task("test", function() {
+ // Be sure to return the stream
+ return gulp.src([].concat(config.scripts, config.tests))
+   .pipe(karma({
+     configFile: config.testConfig,
+     action: 'run'
+   }))
+   .on('error', function(err) {
+     // Make sure failed tests cause gulp to exit non-zero
+     throw err;
+   });
 });
 
 //gulp.task("default", [(isDebug ? "build-debug" : "build-release")]);
