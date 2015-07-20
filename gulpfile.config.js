@@ -1,4 +1,41 @@
+var path = require('path');
+var wiredep = require('wiredep');
+
 ﻿var tsjsmapjsSuffix = ".{ts,js.map,js}";
+
+/**
+ * Get the scripts or styles the app requires by combining bower dependencies and app dependencies
+ *
+ * @param {string} jsOrCss Should be 'js' or 'css'
+ */
+function getBowerScriptsOrStyles(jsOrCss, additionalFiles, wiredepOptions) {
+
+    var bowerScriptsOrStylesAbsolute = wiredep(wiredepOptions)[jsOrCss];
+
+    var bowerScriptsRelativeOrStyles = bowerScriptsOrStylesAbsolute.map(function makePathRelativeToCwd(file) {
+        return path.relative('', file);
+    });
+
+    var appScriptsOrStyles = bowerScriptsRelativeOrStyles.concat(additionalFiles ? additionalFiles : []);
+
+    return appScriptsOrStyles;
+}
+
+/**
+ * Get the scripts the app requires
+ */
+function getScripts() {
+
+    return getBowerScriptsOrStyles('js', config.scripts, config.wiredepOptions);
+}
+
+/**
+ * Get the styles the app requires
+ */
+function getStyles() {
+
+    return getBowerScriptsOrStyles('css');
+}
 
 var bower = "bower_components/";
 var src = "src/";
@@ -6,6 +43,9 @@ var app = src + "app/";
 var tests = "tests/";
 
 var config = {
+    getBowerScriptsOrStyles: getBowerScriptsOrStyles,
+    getScripts: getScripts,
+    getStyles: getStyles,
 
     base: ".",
     buildDir: "./build/",
@@ -55,11 +95,9 @@ var config = {
         src + "styles/styles.less"
     ],
 
-    testConfig: tests + "karma.conf.js",
-
     tests: [
       tests + "bootstrapper.js",
-      tests + "app/**/*.js"
+      tests + "**/*tests*.js"
     ],
 
     wiredepOptions: {

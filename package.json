@@ -8,7 +8,8 @@
     "bower-install": "gulp bower-install",
     "build-debug": "gulp build-debug",
     "build-release": "gulp build-release",
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,6 @@
     "gulp-concat": "^2.4.1",
     "gulp-ignore": "^1.2.1",
     "gulp-inject": "^1.2.0",
-    "gulp-karma": "0.0.4",
     "gulp-less": "^3.0.0",
     "gulp-minify-css": "^0.3.10",
     "gulp-order": "^1.1.1",
@@ -39,8 +39,9 @@
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.1",
     "jasmine-core": "^2.3.4",
-    "karma": "^0.12.37",
+    "karma": "^0.13.0",
     "karma-jasmine": "^0.3.6",
+    "karma-chrome-launcher": "^0.2.0",
     "lodash.bind": "^2.4.1",
     "path": "^0.4.9",
     "wiredep": "^2.2.2",
