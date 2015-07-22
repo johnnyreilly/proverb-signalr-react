@@ -96,6 +96,9 @@ bower_components
 # Typings
 typings
 
+# Karma test results
+test-results
+
 # Windows Azure Build Output
 csx
 *.build.csdef
