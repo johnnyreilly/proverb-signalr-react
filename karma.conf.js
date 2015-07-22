@@ -22,7 +22,18 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', 'junit'],
+
+/*
+https://www.npmjs.com/package/karma-junit-reporter
+*/
+
+    // the default configuration
+    junitReporter: {
+      outputDir: 'test-results', // results will be saved as $outputDir/$browserName.xml
+      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
+      suite: ''
+    },
 
     // enable / disable colors in the output (reporters and logs)
     //colors: true,

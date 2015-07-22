@@ -4,12 +4,11 @@
   "description": "Proverb is a simple app that stores the wise sayings of sages.  This is a collection of variations upon a the proverb theme.  Different versions of \"Proverb\" built using different technologies and techniques for kicks and giggles.  It's a playground for me.",
   "main": "/",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "gulp test",
     "bower-install": "gulp bower-install",
     "build-debug": "gulp build-debug",
     "build-release": "gulp build-release",
-    "start": "node app.js",
-    "test": "gulp test"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -40,8 +39,9 @@
     "gulp-util": "^3.0.1",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.0",
-    "karma-jasmine": "^0.3.6",
     "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-junit-reporter": "^0.3.2",
     "lodash.bind": "^2.4.1",
     "path": "^0.4.9",
     "wiredep": "^2.2.2",
