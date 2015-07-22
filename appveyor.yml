@@ -39,9 +39,7 @@ before_test:
 
             $failed = $testcase.failure
 
-            $time = $testsuite.time
-
-            if ($testcase.time) { $time = $testcase.time }
+            $time = [decimal]$testsuite.time * 1000 # from seconds to milliseconds
 
             if ($failed) {
 
