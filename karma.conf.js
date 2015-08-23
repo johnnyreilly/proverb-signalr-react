@@ -17,16 +17,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: scripts,
-    // files: ['src/hello.js', 'tests/hello.specs.js' ],
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress', 'junit'],
-
-/*
-https://www.npmjs.com/package/karma-junit-reporter
-*/
 
     // the default configuration
     junitReporter: {
@@ -35,15 +30,9 @@ https://www.npmjs.com/package/karma-junit-reporter
       suite: ''
     },
 
-    // enable / disable colors in the output (reporters and logs)
-    //colors: true,
-
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_DEBUG,
-
-    // enable / disable watching file and executing tests whenever any file changes
-    //autoWatch: false,
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher

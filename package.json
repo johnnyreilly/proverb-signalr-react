@@ -5,6 +5,7 @@
   "main": "/",
   "scripts": {
     "test": "gulp test",
+    "test:junit": "karma start --reporters junit --single-run --browsers PhantomJS",
     "bower-install": "gulp bower-install",
     "build-debug": "gulp build-debug",
     "build-release": "gulp build-release",
