@@ -9,16 +9,16 @@ foreach ($testsuite in $testsuites.testsuite) {
 
     foreach ($testcase in $testsuite.testcase){
         $failed = $testcase.failure
-        $time = [double]$testsuite.time * 1000 # from seconds to milliseconds
+        $time = [decimal]$testcase.time * 1000 # from seconds to milliseconds
         $testName = "$($testcase.classname) $($testcase.name)"
 
         if ($failed) {
-            write-host "Failed   $($testcase.name) $($testcase.failure.message)"
+            write-host "Failed $($testcase.name) $($testcase.failure.message) in $($time) ms"
             Add-AppveyorTest $testName -Outcome Failed -FileName $testsuite.name -ErrorMessage $testcase.failure.message -Duration $time
             $anyFailures = $TRUE
         }
         else {
-            write-host "Passed   $($testcase.name)"
+            write-host "Passed $($testcase.name) in $($time) ms"
             Add-AppveyorTest $testName -Outcome Passed -FileName $testsuite.name -Duration $time
         }
     }
