@@ -7,7 +7,7 @@ describe("Proverb.Web -> app-> controllers ->", function () {
 
     describe("sayings ->", function () {
 
-        var $location: ng.ILocationService,
+        let $location: ng.ILocationService,
             $rootScope: ng.IRootScopeService,
             $q: ng.IQService,
             common: common,
@@ -16,14 +16,14 @@ describe("Proverb.Web -> app-> controllers ->", function () {
             saying_getAll_deferred: ng.IDeferred<saying[]>,
             sayingsController: controllers.Sayings;
 
-        var stubSayings: saying[], stubSages: sage[];
+        let stubSayings: saying[], stubSages: sage[];
 
         function setupStubs() {
             stubSages = [{ id: 1, name: "John", username: "", email: "", dateOfBirth: undefined }];
             stubSayings = [{ sageId: 1, id: 2, text: "Pithy pithy pithy" }];
 
             sage_getAll_deferred.resolve(stubSages);
-            saying_getAll_deferred.resolve(stubSayings);;
+            saying_getAll_deferred.resolve(stubSayings);
         }
 
         beforeEach(inject(function (

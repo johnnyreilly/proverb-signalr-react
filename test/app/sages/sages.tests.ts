@@ -7,7 +7,7 @@
 
     describe("sages ->", function () {
 
-        var $rootScope: ng.IRootScopeService,
+        let $rootScope: ng.IRootScopeService,
             $q: ng.IQService,
             common: common,
             datacontext: datacontext,
@@ -62,7 +62,7 @@
 
         describe("activateController ->", function () {
 
-            var stubSages: sage[];
+            let stubSages: sage[];
             beforeEach(function () {
                 stubSages = [{ id: 1, name: "John", username: "johnny_reilly", email: "johnny_reilly@hotmail.com", dateOfBirth: null }];
             });

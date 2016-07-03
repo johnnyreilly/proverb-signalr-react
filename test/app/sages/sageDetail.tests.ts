@@ -47,7 +47,7 @@ function getInjectable() {
         spyOn($location, "path")/*.and.returnValue(jasmine.createSpy("path"))*/;
     });
 
-    return { $controller, $location, $stateParams, common, datacontext, 
+    return { $controller, $location, $stateParams, common, datacontext,
         getById_deferred, $rootScope };
 }
 

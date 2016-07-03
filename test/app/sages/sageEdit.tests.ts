@@ -7,7 +7,7 @@
 
     describe("sageEdit ->", function () {
 
-        var $rootScope: ng.IRootScopeService,
+        let $rootScope: ng.IRootScopeService,
             $q: ng.IQService,
             getById_deferred: ng.IDeferred<sage>, // deferred used for promises
             $location: ng.ILocationService,
@@ -85,7 +85,7 @@
 
         describe("activateController ->", function () {
 
-            var sage_stub: sage;
+            let sage_stub: sage;
             beforeEach(function () {
 
                 sage_stub = { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null };
@@ -113,7 +113,7 @@
 
         describe("save ->", function () {
 
-            var sage_stub: sage,
+            let sage_stub: sage,
                 save_deferred: ng.IDeferred<any>;
 
             beforeEach(function () {
@@ -168,7 +168,7 @@
 
             it("should log failure to save", function () {
 
-                var reject = {};
+                let reject = {};
 
                 sageEditController.save();
 
@@ -181,7 +181,7 @@
             it("should log failure to save by field name", function () {
 
                 sageEditController.$scope.form = <ng.IFormController>{};
-                var reject = {
+                let reject = {
                     errors: {
                         "sage.userName": ["I'm a validation", "Me too"]
                     }
