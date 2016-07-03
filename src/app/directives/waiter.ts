@@ -2,11 +2,10 @@
 
 waiter.$inject = [];
 export function waiter() {
-    //Usage:
-    //<waiter is-waiting="vm.isBusy" spinner-options="vm.spinnerOptions" waitMessage="vm.busyMessage"></waiter>
-    var directive = {
+    // Usage:
+    // <waiter is-waiting="vm.isBusy" spinner-options="vm.spinnerOptions" waitMessage="vm.busyMessage"></waiter>
+    const directive = {
         link: link,
-        //replace: true,
         restrict: "E",
         scope: {
             "isWaiting": "=",
@@ -18,6 +17,6 @@ export function waiter() {
     return directive;
 
     function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
-        //attrs.$set("class", "widget-head");
+        // attrs.$set("class", "widget-head");
     }
 }

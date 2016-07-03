@@ -1,12 +1,12 @@
-﻿import { common } from "../common/common";
-import { config } from "../app";
-import { loggerFunction } from "../common/logger";
-import { sage } from "./repository.sage";
+﻿import { Common } from "../common/common";
+import { Config } from "../app";
+import { LoggerFunction } from "../common/logger";
+import { Sage } from "./repository.sage";
 
-export interface saying {
+export interface Saying {
     id: number;
     sageId: number;
-    sage?: sage;
+    sage?: Sage;
     text: string;
 }
 
@@ -14,27 +14,27 @@ export const repositorySayingServiceName = "repository.saying";
 
 export class RepositorySayingService {
 
-    log: loggerFunction;
+    log: LoggerFunction;
     rootUrl: string;
-    cache: Map<number, saying>;
+    cache: Map<number, Saying>;
 
     static $inject = ["$http", "common", "config"];
-    constructor(private $http: ng.IHttpService, private common: common, private config: config) {
+    constructor(private $http: ng.IHttpService, private common: Common, private config: Config) {
         this.log = common.logger.getLogFn(repositorySayingServiceName);
         this.rootUrl = config.remoteServiceRoot + "saying";
         this.cache = new Map();
     }
 
     getAll() {
-        return this.$http.get<saying[]>(this.rootUrl).then(response => {
-            var sayings = response.data;
+        return this.$http.get<Saying[]>(this.rootUrl).then(response => {
+            const sayings = response.data;
             this.log(sayings.length + " Sayings loaded");
             return sayings;
         });
     }
 
     getById(id: number, forceRemote?: boolean) {
-        var saying: saying;
+        let saying: Saying;
         if (!forceRemote) {
             saying = this.cache.get(id);
             if (saying) {
@@ -43,7 +43,7 @@ export class RepositorySayingService {
             }
         }
 
-        return this.$http.get<saying>(this.rootUrl + "/" + id).then(response => {
+        return this.$http.get<Saying>(this.rootUrl + "/" + id).then(response => {
             saying = response.data;
             this.cache.set(saying.id, saying);
             this.log("Saying [id: " + saying.id + "] loaded");
@@ -59,9 +59,9 @@ export class RepositorySayingService {
         }, errorReason => this.common.$q.reject(errorReason.data));
     }
 
-    save(saying: saying) {
+    save(saying: Saying) {
         return this.$http.post<number>(this.rootUrl, saying).then(response => {
-            var sayingId = response.data || saying.id;
+            const sayingId = response.data || saying.id;
 
             this.log("Saying [id: " + sayingId + "] saved");
 

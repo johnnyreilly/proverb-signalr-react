@@ -1,8 +1,8 @@
-import { repositories } from "./repositories";
+import { Repositories } from "./repositories";
 import { RepositorySayingService } from "./repository.saying";
 import { RepositorySageService } from "./repository.sage";
 
-export interface datacontext {
+export interface DataContext {
     [index: string]: any; // Because of this issue: https://typescript.codeplex.com/discussions/535628
     saying: RepositorySayingService;
     sage: RepositorySageService;
@@ -11,9 +11,9 @@ export interface datacontext {
 export const datacontextServiceFactoryName = "datacontext";
 
 datacontextServiceFactory.$inject = ["repositories"];
-export function datacontextServiceFactory(repositories: repositories) {
+export function datacontextServiceFactory(repositories: Repositories) {
 
-    var service: datacontext = {
+    const service: DataContext = {
         // Undefined members will be replaced with properties in defineLazyLoadedRepos
         saying: undefined,
         sage: undefined
@@ -29,8 +29,8 @@ export function datacontextServiceFactory(repositories: repositories) {
      */
     function defineLazyLoadedRepos() {
 
-        var repoNames: string[] = [];
-        for (var key in service) {
+        const repoNames: string[] = [];
+        for (const key in service) {
             if (service.hasOwnProperty(key) && (service[key] === undefined)) {
                 repoNames.push(key);
             }
@@ -42,7 +42,7 @@ export function datacontextServiceFactory(repositories: repositories) {
                 get: function () {
                     // The 1st time the repo is request via this property, 
                     // we ask the repositories for it (which will inject it).
-                    var repo = repositories.getRepo(name);
+                    const repo = repositories.getRepo(name);
                     // Rewrite this property to always return this repo;
                     // no longer redefinable
                     Object.defineProperty(service, name, {

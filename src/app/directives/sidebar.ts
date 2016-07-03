@@ -7,7 +7,7 @@ export function sidebar() {
     //  <div sidebar>
     // Creates:
     //  <div sidebar class="sidebar">
-    var directive = {
+    const directive = {
         link: link,
         restrict: "A"
     };
@@ -15,10 +15,10 @@ export function sidebar() {
 
     function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
 
-        var $sidebarInner = element.find(".sidebar-inner");
-        var $dropdownElement = element.find(".sidebar-dropdown a");
-        var sideBarIsExpanded = false;
-        var sideBarIsExpandedClass = "sideBarIsExpanded";
+        const $sidebarInner = element.find(".sidebar-inner");
+        const $dropdownElement = element.find(".sidebar-dropdown a");
+        let sideBarIsExpanded = false;
+        const sideBarIsExpandedClass = "sideBarIsExpanded";
 
         element.addClass("sidebar");
 

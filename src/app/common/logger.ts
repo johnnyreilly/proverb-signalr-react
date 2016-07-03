@@ -1,31 +1,31 @@
-export interface loggerFunction {
+export interface LoggerFunction {
     (message: string, data?: Object, showToast?: boolean): void;
 }
 
-export interface loggers {
-    info: loggerFunction;
-    error: loggerFunction;
-    success: loggerFunction;
-    warn: loggerFunction;
+export interface Loggers {
+    info: LoggerFunction;
+    error: LoggerFunction;
+    success: LoggerFunction;
+    warn: LoggerFunction;
 }
 
-interface loggerFunctionWithSource {
+interface LoggerFunctionWithSource {
     (message: string, data: Object, source: string, showToast: boolean): void;
 }
 
-interface loggerInternals {
+interface LoggerInternals {
     [fnName: string]: any;
-    logError: loggerFunctionWithSource;
-    logInfo: loggerFunctionWithSource;
-    logSuccess: loggerFunctionWithSource;
-    logWarning: loggerFunctionWithSource;
+    logError: LoggerFunctionWithSource;
+    logInfo: LoggerFunctionWithSource;
+    logSuccess: LoggerFunctionWithSource;
+    logWarning: LoggerFunctionWithSource;
 }
 
 export const loggerServiceName = "logger";
 
 export class LoggerService {
 
-    internals: loggerInternals;
+    internals: LoggerInternals;
     static $inject = ["$log", "toastr"];
     constructor(private $log: ng.ILogService, private toastr: Toastr) {
         this.internals = {
@@ -33,7 +33,7 @@ export class LoggerService {
             logInfo: this.logInfo,
             logSuccess: this.logSuccess,
             logWarning: this.logWarning
-        }
+        };
     }
 
     getLogFn(moduleId: string, fnName?: string) {
@@ -49,10 +49,10 @@ export class LoggerService {
                 fnName = "logInfo"; break;
         }
 
-        var logFn: loggerFunctionWithSource = this.internals[fnName] || this.internals.logInfo;
+        const logFn: LoggerFunctionWithSource = this.internals[fnName] || this.internals.logInfo;
         return function (msg: string, data: Object, showToast: boolean) {
 
-            var displayToast = (showToast === undefined)
+            const displayToast = (showToast === undefined)
                 ? (fnName !== "logInfo") ? true : false
                 : showToast;
 
@@ -60,14 +60,14 @@ export class LoggerService {
         };
     }
 
-    getLoggers(moduleId: string): loggers {
+    getLoggers(moduleId: string): Loggers {
 
         return {
             error: this.getLogFn(moduleId, "error"),
             info: this.getLogFn(moduleId, "info"),
             success: this.getLogFn(moduleId, "success"),
             warn: this.getLogFn(moduleId, "warn")
-        }
+        };
     }
 
     logInfo = (message: string, data: Object, source: string, showToast: boolean) => {
@@ -88,8 +88,8 @@ export class LoggerService {
 
     logIt(message: string, data: Object, source: string, showToast: boolean, logType: string) {
 
-        var logger: ng.ILogCall;
-        var toastType: ToastrDisplayMethod;
+        let logger: ng.ILogCall;
+        let toastType: ToastrDisplayMethod;
 
         if (logType === "error") {
             logger = this.$log.error;

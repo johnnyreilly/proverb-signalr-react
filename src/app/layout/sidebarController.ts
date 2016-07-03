@@ -18,7 +18,7 @@ export class SidebarController {
         this.$rootScope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => {
             this.currentRoute = toState;
         });
-        this.getNavRoutes(); 
+        this.getNavRoutes();
     }
 
     getNavRoutes() {

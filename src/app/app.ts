@@ -6,12 +6,12 @@ import "angular-ui-router";
 import toastr from "toastr";
 import moment from "moment";
 
-import { commonConfigProvider } from "./common/common";
+import { CommonConfigProvider } from "./common/common";
 import { LoggerService } from "./common/logger";
 import createApp from "./app.register";
 import { getRoutes, configureRoutes, getTemplatesToCache } from "./app.routes";
 
-interface appConfig {
+interface AppConfig {
     appName: string;
     appRoot: string;
     inDebug: boolean;
@@ -19,7 +19,7 @@ interface appConfig {
     version: string;
 }
 
-export interface configEvents {
+export interface ConfigEvents {
     controllerActivateSuccess: string;
     failure: string;
     spinnerToggle: string;
@@ -27,14 +27,14 @@ export interface configEvents {
     waiterSuccess: string;
 }
 
-export interface config extends appConfig {
+export interface Config extends AppConfig {
     appErrorPrefix: string;
     docTitle: string;
-    events: configEvents;
+    events: ConfigEvents;
     imageSettings?: {
         imageBasePath: string;
         unknownPersonImageSource: string;
-    }
+    };
     urlCacheBusterSuffix: string;
 }
 
@@ -55,10 +55,10 @@ function addThirdPartyLibs(app: ng.IModule) {
 /**
  * Configure application
  */
-function configureApp(app: ng.IModule, appConfig: appConfig) {
+function configureApp(app: ng.IModule, appConfig: AppConfig) {
 
-    const config: config = {
-        appErrorPrefix: "[Error] ", //Configure the exceptionHandler decorator
+    const config: Config = {
+        appErrorPrefix: "[Error] ", // Configure the exceptionHandler decorator
         appName: appConfig.appName,
         appRoot: appConfig.appRoot,
         docTitle: appConfig.appName + ": ",
@@ -86,7 +86,7 @@ function configureApp(app: ng.IModule, appConfig: appConfig) {
     }]);
 
     // Copy across config settings to commonConfigProvider to configure the common services
-    app.config(["commonConfigProvider", function (commonConfigProvider: commonConfigProvider) {
+    app.config(["commonConfigProvider", function (commonConfigProvider: CommonConfigProvider) {
 
         // Copy events across from config.events
         commonConfigProvider.config.events = Object.assign({}, config.events);
@@ -99,7 +99,7 @@ function configureApp(app: ng.IModule, appConfig: appConfig) {
 function configureHttpProvider(app: ng.IModule) {
 
     const serviceId = "urlInterceptor";
-    app.factory(serviceId, ["$templateCache", "config", function ($templateCache: angular.ITemplateCacheService, config: config) {
+    app.factory(serviceId, ["$templateCache", "config", function ($templateCache: angular.ITemplateCacheService, config: Config) {
 
         const service = {
             request: request
@@ -149,7 +149,7 @@ function decorateExceptionHandler(app: ng.IModule) {
         $provide.decorator("$exceptionHandler",
             ["$delegate", "config", "logger", extendExceptionHandler]);
 
-        function extendExceptionHandler($delegate: angular.IExceptionHandlerService, config: config, logger: LoggerService) {
+        function extendExceptionHandler($delegate: angular.IExceptionHandlerService, config: Config, logger: LoggerService) {
             const appErrorPrefix = config.appErrorPrefix;
             const logError = logger.getLogFn("app", "error");
             return function (exception: Error, cause: string) {
@@ -174,11 +174,11 @@ function registerTemplatesToCache(app: ng.IModule) {
     ($templateCache: ng.ITemplateCacheService) => {
         getTemplatesToCache().forEach((template, url) => {
             $templateCache.put(url, template);
-        })
+        });
     }]);
 }
 
-function initialise(appConfig: appConfig) {
+function initialise(appConfig: AppConfig) {
 
     const app = createApp();
 

@@ -1,25 +1,25 @@
-﻿import { common } from "../common/common";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
-import { saying } from "../services/repository.saying";
+﻿import { Common } from "../common/common";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
+import { Saying } from "../services/repository.saying";
 
 export const sayingsControllerName = "sayings";
 
 export class SayingsController {
 
-    log: loggers;
-    sageDictionary: { [id: string]: sage };
-    sages: sage[];
-    sayings: saying[];
-    selectedSage: sage;
+    log: Loggers;
+    sageDictionary: { [id: string]: Sage };
+    sages: Sage[];
+    sayings: Saying[];
+    selectedSage: Sage;
     title: string;
 
     static $inject = ["$location", "common", "datacontext"];
     constructor(
         private $location: ng.ILocationService,
-        private common: common,
-        private datacontext: datacontext
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.sageDictionary = {};
@@ -37,8 +37,8 @@ export class SayingsController {
 
     activate() {
 
-        var dataPromises: ng.IPromise<any>[] = [this.getProverbs(), this.getSages()];
-        var combinerPromise = this.common.$q.all(dataPromises).then(() => this.combineData());
+        const dataPromises: ng.IPromise<any>[] = [this.getProverbs(), this.getSages()];
+        const combinerPromise = this.common.$q.all(dataPromises).then(() => this.combineData());
 
         this.common.activateController([combinerPromise], sayingsControllerName, this.title)
             .then(() => this.log.info("Activated Sayings View"));
@@ -52,7 +52,7 @@ export class SayingsController {
         // Set the sage on each saying using the sage dictionary
         this.sayings.forEach(saying => saying.sage = this.sageDictionary[saying.sageId.toString()]);
 
-        var search = this.$location.search()
+        const search = this.$location.search();
         if (search.sageId) {
             this.selectedSage = this.sageDictionary[search.sageId];
         }
@@ -76,8 +76,8 @@ export class SayingsController {
 
     // Instance methods
 
-    bySelectedSage = (saying: saying) => {
+    bySelectedSage = (saying: Saying) => {
         if (!this.selectedSage) { return true; }
-        return saying.sage === this.selectedSage
+        return saying.sage === this.selectedSage;
     }
 }

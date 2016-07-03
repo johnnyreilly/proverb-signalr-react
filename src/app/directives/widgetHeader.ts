@@ -2,9 +2,9 @@
 
 widgetHeader.$inject = [];
 export function widgetHeader() {
-    //Usage:
-    //<div widget-header title="vm.map.title"></div>
-    var directive = {
+    // Usage:
+    // <div widget-header title="vm.map.title"></div>
+    const directive = {
         link: link,
         restrict: "A",
         scope: {

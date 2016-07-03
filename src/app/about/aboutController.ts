@@ -1,18 +1,18 @@
-﻿import { config } from "../app";
-import { common } from "../common/common";
-import { loggers } from "../common/logger";
+﻿import { Config } from "../app";
+import { Common } from "../common/common";
+import { Loggers } from "../common/logger";
 
 export const aboutControllerName = "about";
 
 export class AboutController {
 
-    log: loggers;
+    log: Loggers;
     version: string;
 
     static $inject = ["common", "config"];
     constructor(
-        private common: common,
-        private config: config
+        private common: Common,
+        private config: Config
         ) {
 
         this.version = config.version;

@@ -1,42 +1,42 @@
-import { common } from "../common/common";
-import { config } from "../app";
-import { loggerFunction } from "../common/logger";
-import { saying } from "./repository.saying";
+import { Common } from "../common/common";
+import { Config } from "../app";
+import { LoggerFunction } from "../common/logger";
+import { Saying } from "./repository.saying";
 
-export interface sage {
+export interface Sage {
     id: number;
     name: string;
     username: string;
     email: string;
     dateOfBirth: Date;
-    sayings?: saying[];
+    sayings?: Saying[];
 }
 
 export const repositorySageServiceName = "repository.sage";
 
 export class RepositorySageService {
 
-    log: loggerFunction;
+    log: LoggerFunction;
     rootUrl: string;
-    cache: Map<number, sage>;
+    cache: Map<number, Sage>;
 
     static $inject = ["$http", "common", "config"];
-    constructor(private $http: ng.IHttpService, private common: common, private config: config) {
+    constructor(private $http: ng.IHttpService, private common: Common, private config: Config) {
         this.log = common.logger.getLogFn(repositorySageServiceName);
         this.rootUrl = config.remoteServiceRoot + "sage";
         this.cache = new Map();
     }
 
     getAll() {
-        return this.$http.get<sage[]>(this.rootUrl).then(response => {
-            var sages = response.data;
+        return this.$http.get<Sage[]>(this.rootUrl).then(response => {
+            const sages = response.data;
             this.log(sages.length + " Sages loaded");
             return sages;
         });
     }
 
     getById(id: number, forceRemote?: boolean) {
-        var sage: sage;
+        let sage: Sage;
         if (!forceRemote) {
             sage = this.cache.get(id);
             if (sage) {
@@ -45,7 +45,7 @@ export class RepositorySageService {
             }
         }
 
-        return this.$http.get<sage>(this.rootUrl + "/" + id).then(response => {
+        return this.$http.get<Sage>(this.rootUrl + "/" + id).then(response => {
             sage = response.data;
             this.cache.set(sage.id, sage);
             this.log("Sage " + sage.name + " [id: " + sage.id + "] loaded");
@@ -61,7 +61,7 @@ export class RepositorySageService {
         }, errorReason => this.common.$q.reject(errorReason.data));
     }
 
-    save(sage: sage) {
+    save(sage: Sage) {
         return this.$http.post<void>(this.rootUrl, sage).then(response => {
             this.log("Sage " + sage.name + " [id: " + sage.id + "] saved");
 

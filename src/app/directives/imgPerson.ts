@@ -1,14 +1,14 @@
-﻿import { config } from "../app";
+﻿import { Config } from "../app";
 
 export const imgPersonName = "imgPerson";
 
 imgPerson.$inject = ["config"];
-export function imgPerson(config: config) {
-    //Usage:
-    //<img img-person="{{s.speaker.imageSource}}"/>
-    var basePath = config.imageSettings.imageBasePath;
-    var unknownImage = config.imageSettings.unknownPersonImageSource;
-    var directive = {
+export function imgPerson(config: Config) {
+    // Usage:
+    // <img img-person="{{s.speaker.imageSource}}"/>
+    const basePath = config.imageSettings.imageBasePath;
+    const unknownImage = config.imageSettings.unknownPersonImageSource;
+    const directive = {
         link: link,
         restrict: "A"
     };

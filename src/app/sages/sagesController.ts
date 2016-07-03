@@ -1,20 +1,20 @@
-﻿import { common } from "../common/common";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
+﻿import { Common } from "../common/common";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
 
 export const sagesControllerName = "sages";
 
 export class SagesController {
 
-    log: loggers;
-    sages: sage[];
+    log: Loggers;
+    sages: Sage[];
     title: string;
 
     static $inject = ["common", "datacontext"];
     constructor(
-        private common: common,
-        private datacontext: datacontext
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.sages = [];

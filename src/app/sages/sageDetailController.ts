@@ -1,26 +1,26 @@
-﻿import { common } from "../common/common";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
+﻿import { Common } from "../common/common";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
 
 export const sageDetailControllerName = "sageDetail";
 
-export interface sageDetailRouteParams extends ng.ui.IStateParamsService {
+export interface SageDetailRouteParams extends ng.ui.IStateParamsService {
     id: string;
 }
 
 export class SageDetailController {
 
-    log: loggers;
-    sage: sage;
+    log: Loggers;
+    sage: Sage;
     title: string;
 
     static $inject = ["$location", "$stateParams", "common", "datacontext"];
     constructor(
         private $location: ng.ILocationService,
-        private $stateParams: sageDetailRouteParams,
-        private common: common,
-        private datacontext: datacontext
+        private $stateParams: SageDetailRouteParams,
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.sage = undefined;
@@ -34,8 +34,8 @@ export class SageDetailController {
     // Prototype methods
 
     activate() {
-        var id = parseInt(this.$stateParams.id, 10);
-        var dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getById(id, true).then(data => this.sage = data)];
+        const id = parseInt(this.$stateParams.id, 10);
+        const dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getById(id, true).then(data => this.sage = data)];
 
         this.common.activateController(dataPromises, sageDetailControllerName, this.title)
             .then(() => {

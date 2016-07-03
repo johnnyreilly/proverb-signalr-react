@@ -1,32 +1,28 @@
 ﻿import Spinner from "spin.js";
 
-interface spinnerWindowService extends ng.IWindowService {
-    Spinner: typeof Spinner;
-}
-
-interface spinnerScope extends ng.IScope {
+interface SpinnerScope extends ng.IScope {
     spinner: Spinner;
 }
 
-interface spinnerAttributes extends ng.IAttributes {
+interface SpinnerAttributes extends ng.IAttributes {
     spinner: any;
 }
 
 export const spinnerName = "spinner";
 
-spinner.$inject = ["$window"];
-export function spinner($window: spinnerWindowService) {
+spinner.$inject = [];
+export function spinner() {
     // Description:
     //  Creates a new Spinner and sets its options
     // Usage:
     //  <div spinner="vm.spinnerOptions"></div>
-    var directive = {
+    const directive = {
         link: link,
         restrict: "A"
     };
     return directive;
 
-    function link(scope: spinnerScope, element: ng.IAugmentedJQuery, attrs: spinnerAttributes) {
+    function link(scope: SpinnerScope, element: ng.IAugmentedJQuery, attrs: SpinnerAttributes) {
         scope.spinner = null;
         scope.$watch(attrs.spinner, function (options) {
             if (scope.spinner) {

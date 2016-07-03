@@ -1,19 +1,19 @@
-﻿import { common } from "../common/common";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
+﻿import { Common } from "../common/common";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
 
 export const dashboardControllerName = "dashboard";
 
 export class DashboardController {
 
-    log: loggers;
-    sages: sage[];
+    log: Loggers;
+    sages: Sage[];
 
     static $inject = ["common", "datacontext"];
     constructor(
-        private common: common,
-        private datacontext: datacontext
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.sages = [];
@@ -26,7 +26,7 @@ export class DashboardController {
     // Prototype methods
 
     activate() {
-        var promises: ng.IPromise<any>[] = [this.getSages()];
+        const promises: ng.IPromise<any>[] = [this.getSages()];
         this.common.activateController(promises, dashboardControllerName, "Dashboard")
             .then(() => this.log.info("Activated Dashboard View"));
     }

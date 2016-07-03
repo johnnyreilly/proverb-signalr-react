@@ -8,7 +8,7 @@ export function widgetClose() {
     // <a widget-close="" href="#" class="wclose">
     //     <i class="fa fa-remove"></i>
     // </a>
-    var directive = {
+    const directive = {
         link: link,
         template: '<i class="fa fa-remove"></i>',
         restrict: "A"

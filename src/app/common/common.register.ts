@@ -1,4 +1,4 @@
-﻿import { commonName, commonServiceFactory, commonConfigProvider } from "./common";
+﻿import { commonName, commonServiceFactory, CommonConfigProvider } from "./common";
 import { loggerServiceName, LoggerService } from "./logger";
 import { modalDialogServiceName, ModalDialogService } from "./modalDialog";
 import { spinnerServiceName, SpinnerService } from "./spinner";
@@ -20,7 +20,7 @@ export function createCommon() {
                 // This will be populated in app.ts via the app.config(["commonConfigProvider", function ...
             };
 
-            this.$get = function (): commonConfigProvider {
+            this.$get = function (): CommonConfigProvider {
                 return {
                     config: this.config
                 };

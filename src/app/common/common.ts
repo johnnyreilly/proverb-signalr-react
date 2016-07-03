@@ -1,7 +1,7 @@
-import { configEvents } from "../app";
+import { ConfigEvents } from "../app";
 import { LoggerService } from "./logger";
 
-export interface common {
+export interface Common {
     $broadcast: (...args: any[]) => ng.IAngularEvent;
     $q: ng.IQService;
     $timeout: ng.ITimeoutService;
@@ -15,29 +15,29 @@ export interface common {
     waiter: <T>(promise: ng.IPromise<T>, controllerId: string, message?: string) => ng.IPromise<T>;
 }
 
-export interface commonConfigProvider {
+export interface CommonConfigProvider {
     config: {
-        events: configEvents;
+        events: ConfigEvents;
     };
 }
 
-export interface controllerActivateSuccessData {
+export interface ControllerActivateSuccessData {
     controllerId: string;
     title: string;
 }
 
-export interface failureData {
+export interface FailureData {
     controllerId: string;
     showToast: boolean;
     failureReason: any;
 }
 
-export interface waiterStartData {
+export interface WaiterStartData {
     controllerId: string;
     message: string;
 }
 
-export interface waiterSuccessData {
+export interface WaiterSuccessData {
     controllerId: string;
 }
 
@@ -48,11 +48,11 @@ export function commonServiceFactory(
     $q: ng.IQService,
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    commonConfigProvider: commonConfigProvider,
+    commonConfigProvider: CommonConfigProvider,
     logger: LoggerService) {
-    var throttles: { [key: string]: ng.IPromise<any> } = {};
+    const throttles: { [key: string]: ng.IPromise<any> } = {};
 
-    var service: common = {
+    const service: Common = {
         // common angular dependencies
         $broadcast: $broadcast,
         $q: $q,
@@ -71,18 +71,18 @@ export function commonServiceFactory(
 
     function activateController(promises: ng.IPromise<any>[], controllerId: string, title: string) {
 
-        var events = commonConfigProvider.config.events;
+        const events = commonConfigProvider.config.events;
 
-        var allPromise = $q.all(promises).then(
+        const allPromise = $q.all(promises).then(
             (eventArgs) => {
-                var data: controllerActivateSuccessData = {
+                const data: ControllerActivateSuccessData = {
                     controllerId: controllerId,
                     title: title
                 };
                 $broadcast(events.controllerActivateSuccess, data);
             },
             (reason) => {
-                var data: failureData = {
+                const data: FailureData = {
                     controllerId: controllerId,
                     showToast: true,
                     failureReason: reason
@@ -112,7 +112,7 @@ export function commonServiceFactory(
         }
 
         // create the filtering function we will call from here
-        var filterFn = function () {
+        const filterFn = function () {
             // translates to ...
             // vm.filteredSessions 
             //      = vm.sessions.filter(function(item( { returns vm.sessionFilter (item) } );
@@ -124,7 +124,7 @@ export function commonServiceFactory(
         return (function () {
             // Wrapped in outer IFFE so we can use closure 
             // over filterInputTimeout which references the timeout
-            var filterInputTimeout: ng.IPromise<any>;
+            let filterInputTimeout: ng.IPromise<any>;
 
             // return what becomes the 'applyFilter' function in the controller
             return function(searchNow: boolean) {
@@ -146,7 +146,7 @@ export function commonServiceFactory(
         // Track the callback by key, so if the same callback 
         // is issued again, restart the delay.
 
-        var defaultDelay = 1000;
+        const defaultDelay = 1000;
         delay = delay || defaultDelay;
         if (throttles[key]) {
             $timeout.cancel(throttles[key]);
@@ -170,9 +170,9 @@ export function commonServiceFactory(
 
     function waiter<T>(promise: ng.IPromise<T>, controllerId: string, message?: string): ng.IPromise<T> {
 
-        var events = commonConfigProvider.config.events;
+        const events = commonConfigProvider.config.events;
 
-        var data: waiterStartData = {
+        const data: WaiterStartData = {
             controllerId: controllerId,
             message: message
         };
@@ -180,13 +180,13 @@ export function commonServiceFactory(
 
         return promise.then(
             (promiseData) => {
-                var data: waiterSuccessData = { controllerId: controllerId };
+                const data: WaiterSuccessData = { controllerId: controllerId };
                 $broadcast(events.waiterSuccess, data);
 
                 return promiseData;
             },
             (reason) => {
-                var data: failureData = {
+                const data: FailureData = {
                     controllerId: controllerId,
                     showToast: false,
                     failureReason: reason

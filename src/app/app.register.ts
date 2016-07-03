@@ -52,7 +52,7 @@ function createApp() {
     .factory(repositoriesServiceFactoryName, repositoriesServiceFactory)
     .service(repositorySageServiceName, RepositorySageService)
     .service(repositorySayingServiceName, RepositorySayingService)
-    
+
     .directive(imgPersonName, imgPerson)
     .directive(serverErrorName, serverError)
     .directive(serverErrorTooltipName, serverErrorTooltip)

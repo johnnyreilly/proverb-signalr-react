@@ -19,7 +19,7 @@ export function serverError() {
     // Usage:
     // <input class="col-xs-12 col-sm-9" name="sage.name" ng-model="vm.sage.name" server-error="vm.errors" />
 
-    var directive = {
+    const directive = {
         link: link,
         restrict: "A",
         require: "ngModel" // Make Angular supply the ngModel controller as the 4th parameter in the link function
@@ -28,14 +28,14 @@ export function serverError() {
 
     function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: ng.INgModelController) {
         // Extract values from attributes (deliberately not using isolated scope because using Angular UI)
-        var errorKey: string = attrs["name"]; // eg "sage.name"
-        var errorDictionaryExpression: string = attrs["serverError"]; // eg "vm.errors"
+        const errorKey: string = attrs["name"]; // eg "sage.name"
+        const errorDictionaryExpression: string = attrs["serverError"]; // eg "vm.errors"
 
         // Bootstrap alert template for error
-        var template = '<div class="alert alert-danger" role="alert"><i class="glyphicon glyphicon-warning-sign larger"></i> %error%</div>';
+        const template = '<div class="alert alert-danger" role="alert"><i class="glyphicon glyphicon-warning-sign larger"></i> %error%</div>';
 
         // Create an element to hold the validation message
-        var decorator = angular.element('<div></div>');
+        const decorator = angular.element("<div></div>");
         element.after(decorator);
 
         // Watch ngModelController.$error.server & show/hide validation accordingly
@@ -44,9 +44,9 @@ export function serverError() {
         function showHideValidation(serverError: boolean) {
 
             // Display an error if serverError is true otherwise clear the element
-            var errorHtml = "";
+            let errorHtml = "";
             if (serverError) {
-                var errorDictionary: { [field: string]: string } = scope.$eval(errorDictionaryExpression);
+                const errorDictionary: { [field: string]: string } = scope.$eval(errorDictionaryExpression);
                 errorHtml = template.replace(/%error%/, errorDictionary[errorKey] || "Unknown error occurred...");
             }
             decorator.html(errorHtml);
@@ -69,7 +69,7 @@ export function serverErrorTooltip($compile: ng.ICompileService) {
     // <input class="col-xs-12 col-sm-9" name="sage.name" ng-model="vm.sage.name"
     //        server-error-tooltip tooltip="{{vm.errors['sage.name']}}" />
 
-    var directive = {
+    const directive = {
         link: link,
         restrict: "A",
         require: "ngModel", // Make Angular supply the ngModel controller as the 4th parameter in the link function

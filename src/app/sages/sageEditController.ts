@@ -1,16 +1,16 @@
-﻿import { common } from "../common/common";
+﻿import { Common } from "../common/common";
 import { modalDialogServiceName, ModalDialogService } from "../common/modalDialog";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
 
 export const sageEditControllerName = "sageEdit";
 
-export interface sageEditRouteParams extends ng.ui.IStateParamsService {
+export interface SageEditRouteParams extends ng.ui.IStateParamsService {
     id: string;
 }
 
-export interface sageEditScope extends ng.IScope {
+export interface SageEditScope extends ng.IScope {
     form: ng.IFormController;
 }
 
@@ -18,8 +18,8 @@ export class SageEditController {
 
     dateOfBirthDatePickerIsOpen: boolean;
     errors: { [field: string]: string };
-    log: loggers;
-    sage: sage;
+    log: Loggers;
+    sage: Sage;
     title: string;
 
     _isSavingOrRemoving: boolean;
@@ -27,11 +27,11 @@ export class SageEditController {
     static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, "common", "datacontext"];
     constructor(
         private $location: ng.ILocationService,
-        private $stateParams: sageEditRouteParams,
-        public  $scope: sageEditScope,
+        private $stateParams: SageEditRouteParams,
+        public  $scope: SageEditScope,
         private bsDialog: ModalDialogService,
-        private common: common,
-        private datacontext: datacontext
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.dateOfBirthDatePickerIsOpen = false;
@@ -48,8 +48,8 @@ export class SageEditController {
     // Prototype methods
 
     activate() {
-        var id = parseInt(this.$stateParams.id, 10);
-        var dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getById(id).then(sage => this.sage = sage)];
+        const id = parseInt(this.$stateParams.id, 10);
+        const dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getById(id).then(sage => this.sage = sage)];
 
         this.common.activateController(dataPromises, sageEditControllerName, this.title)
             .then(() => {
@@ -64,7 +64,7 @@ export class SageEditController {
 
     remove() {
 
-        var sageToRemove = this.sage.name;
+        const sageToRemove = this.sage.name;
 
         this.bsDialog.deleteDialog("Do you want to remove " + sageToRemove + "?")
             .then(() => {
@@ -86,10 +86,10 @@ export class SageEditController {
 
     save() {
 
-        this.errors = {}; //Wipe server errors
+        this.errors = {}; // Wipe server errors
         this._isSavingOrRemoving = true;
 
-        var sageToSave = this.sage.name;
+        const sageToSave = this.sage.name;
 
         this.common.waiter(this.datacontext.sage.save(this.sage), sageEditControllerName, "Saving " + sageToSave)
             .then(response => {
@@ -102,7 +102,7 @@ export class SageEditController {
                 if (response.errors) {
 
                     angular.forEach(response.errors, (errors, field) => {
-                        var model: ng.INgModelController = this.$scope.form[field];
+                        const model: ng.INgModelController = this.$scope.form[field];
                         if (model) {
                             model.$setValidity("server", false);
                         }

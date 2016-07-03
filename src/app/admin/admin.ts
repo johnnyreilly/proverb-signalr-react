@@ -1,18 +1,18 @@
-﻿import { common } from "../common/common";
+﻿import { Common } from "../common/common";
 
-interface adminVm {
+interface AdminVm {
     title: string;
 }
 
 (function () {
     "use strict";
-    var controllerId = "admin";
+    const controllerId = "admin";
     angular.module("app").controller(controllerId, ["common", admin]);
 
-    function admin(common: common) {
-        var log = common.logger.getLoggers(controllerId);
+    function admin(common: Common) {
+        const log = common.logger.getLoggers(controllerId);
 
-        var vm: adminVm = this;
+        const vm: AdminVm = this;
         vm.title = "Admin";
 
         activate();

@@ -1,26 +1,26 @@
-﻿import { common } from "../common/common";
+﻿import { Common } from "../common/common";
 import { modalDialogServiceName, ModalDialogService } from "../common/modalDialog";
-import { loggers } from "../common/logger";
-import { datacontext } from "../services/datacontext";
-import { sage } from "../services/repository.sage";
-import { saying } from "../services/repository.saying";
+import { Loggers } from "../common/logger";
+import { DataContext } from "../services/datacontext";
+import { Sage } from "../services/repository.sage";
+import { Saying } from "../services/repository.saying";
 
 export const sayingEditControllerName = "sayingEdit";
 
-interface sayingEditRouteParams extends ng.ui.IStateParamsService {
+interface SayingEditRouteParams extends ng.ui.IStateParamsService {
     id: string;
 }
 
-interface sayingEditScope extends ng.IScope {
+interface SayingEditScope extends ng.IScope {
     form: ng.IFormController;
 }
 
 export class SayingEditController {
 
     errors: { [field: string]: string };
-    log: loggers;
-    sages: sage[];
-    saying: saying;
+    log: Loggers;
+    sages: Sage[];
+    saying: Saying;
     title: string;
 
     private _isSavingOrRemoving: boolean;
@@ -28,11 +28,11 @@ export class SayingEditController {
     static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, "common", "datacontext"];
     constructor(
         private $location: ng.ILocationService,
-        private $stateParams: sayingEditRouteParams,
-        private $scope: sayingEditScope,
+        private $stateParams: SayingEditRouteParams,
+        private $scope: SayingEditScope,
         private bsDialog: ModalDialogService,
-        private common: common,
-        private datacontext: datacontext
+        private common: Common,
+        private datacontext: DataContext
         ) {
 
         this.errors = {};
@@ -49,9 +49,9 @@ export class SayingEditController {
 
     activate() {
 
-        var id = parseInt(this.$stateParams.id, 10);
-        var dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getAll().then(data => this.sages = data)];
-        var title: string;
+        const id = parseInt(this.$stateParams.id, 10);
+        const dataPromises: ng.IPromise<any>[] = [this.datacontext.sage.getAll().then(data => this.sages = data)];
+        let title: string;
 
         if (id) {
             dataPromises.push(this.datacontext.saying.getById(id, true).then(saying => this.saying = saying));
@@ -95,11 +95,11 @@ export class SayingEditController {
 
     save() {
 
-        this.errors = {}; //Wipe server errors
+        this.errors = {}; // Wipe server errors
         this._isSavingOrRemoving = true;
 
         // Prepare the saying to save - send the minimal payload of data across the wire
-        var sayingToSave = angular.copy(this.saying);
+        const sayingToSave = angular.copy(this.saying);
         if (sayingToSave.sage) {
             sayingToSave.sageId = sayingToSave.sage.id;
         }
@@ -119,7 +119,7 @@ export class SayingEditController {
                 if (response.errors) {
 
                     angular.forEach(response.errors, (errors, field) => {
-                        var model: ng.INgModelController = this.$scope.form[field];
+                        const model: ng.INgModelController = this.$scope.form[field];
                         if (model) {
                             model.$setValidity("server", false);
                         }
