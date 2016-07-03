@@ -20,8 +20,8 @@ export class RepositorySageService {
     rootUrl: string;
     cache: Map<number, Sage>;
 
-    static $inject = ["$http", "common", "config"];
-    constructor(private $http: ng.IHttpService, private common: Common, private config: Config) {
+    static $inject = ["$http", "common", "config", "moment"];
+    constructor(private $http: ng.IHttpService, private common: Common, private config: Config, private moment: moment.MomentStatic) {
         this.log = common.logger.getLogFn(repositorySageServiceName);
         this.rootUrl = config.remoteServiceRoot + "sage";
         this.cache = new Map();
@@ -29,7 +29,10 @@ export class RepositorySageService {
 
     getAll() {
         return this.$http.get<Sage[]>(this.rootUrl).then(response => {
-            const sages = response.data;
+            const sages = response.data.map(sage => {
+                sage.dateOfBirth = this.moment(sage.dateOfBirth).toDate();
+                return sage;
+            });
             this.log(sages.length + " Sages loaded");
             return sages;
         });
@@ -47,6 +50,7 @@ export class RepositorySageService {
 
         return this.$http.get<Sage>(this.rootUrl + "/" + id).then(response => {
             sage = response.data;
+            sage.dateOfBirth = this.moment(sage.dateOfBirth).toDate();
             this.cache.set(sage.id, sage);
             this.log("Sage " + sage.name + " [id: " + sage.id + "] loaded");
             return sage;
