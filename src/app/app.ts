@@ -178,7 +178,7 @@ function registerTemplatesToCache(app: ng.IModule) {
     }]);
 }
 
-function initialise(appConfig: AppConfig) {
+export function initialiseApp(appConfig: AppConfig) {
 
     const app = createApp();
 
@@ -197,4 +197,6 @@ function initialise(appConfig: AppConfig) {
     return app.name;
 }
 
-export default initialise;
+export function startApp(appName: string) {
+    angular.element(document).ready(() => angular.bootstrap(document, [appName]));
+}
