@@ -1,58 +1,58 @@
-interface datacontext {
+import { repositories } from "./repositories";
+import { RepositorySayingService } from "./repository.saying";
+import { RepositorySageService } from "./repository.sage";
+
+export interface datacontext {
     [index: string]: any; // Because of this issue: https://typescript.codeplex.com/discussions/535628
-    saying: repositorySaying;
-    sage: repositorySage;
+    saying: RepositorySayingService;
+    sage: RepositorySageService;
 }
 
-(function () {
-    "use strict";
+export const datacontextServiceFactoryName = "datacontext";
 
-    var serviceId = "datacontext";
-    angular.module("app").factory(serviceId, ["repositories", datacontext]);
+datacontextServiceFactory.$inject = ["repositories"];
+export function datacontextServiceFactory(repositories: repositories) {
 
-    function datacontext(repositories: repositories) {
+    var service: datacontext = {
+        // Undefined members will be replaced with properties in defineLazyLoadedRepos
+        saying: undefined,
+        sage: undefined
+    };
 
-        var service: datacontext = {
-            // Undefined members will be replaced with properties in defineLazyLoadedRepos
-            saying: undefined,
-            sage: undefined
-        };
+    defineLazyLoadedRepos();
 
-        defineLazyLoadedRepos();
-
-        return service;
+    return service;
 
 
-        /**
-         * Replace undefined members on service with ES5 properties for each repo
-         */
-        function defineLazyLoadedRepos() {
+    /**
+     * Replace undefined members on service with ES5 properties for each repo
+     */
+    function defineLazyLoadedRepos() {
 
-            var repoNames: string[] = [];
-            for (var key in service) {
-                if (service.hasOwnProperty(key) && (service[key] === undefined)) {
-                    repoNames.push(key);
-                }
+        var repoNames: string[] = [];
+        for (var key in service) {
+            if (service.hasOwnProperty(key) && (service[key] === undefined)) {
+                repoNames.push(key);
             }
-
-            repoNames.forEach(function (name) {
-                Object.defineProperty(service, name, {
-                    configurable: true, // will redefine this property once
-                    get: function () {
-                        // The 1st time the repo is request via this property, 
-                        // we ask the repositories for it (which will inject it).
-                        var repo = repositories.getRepo(name);
-                        // Rewrite this property to always return this repo;
-                        // no longer redefinable
-                        Object.defineProperty(service, name, {
-                            value: repo,
-                            configurable: false,
-                            enumerable: true
-                        });
-                        return repo;
-                    }
-                });
-            });
         }
+
+        repoNames.forEach(function (name) {
+            Object.defineProperty(service, name, {
+                configurable: true, // will redefine this property once
+                get: function () {
+                    // The 1st time the repo is request via this property, 
+                    // we ask the repositories for it (which will inject it).
+                    var repo = repositories.getRepo(name);
+                    // Rewrite this property to always return this repo;
+                    // no longer redefinable
+                    Object.defineProperty(service, name, {
+                        value: repo,
+                        configurable: false,
+                        enumerable: true
+                    });
+                    return repo;
+                }
+            });
+        });
     }
-})();
+}

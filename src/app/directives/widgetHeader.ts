@@ -1,26 +1,23 @@
-﻿(function () {
-    "use strict";
+﻿export const widgetHeaderName = "widgetHeader";
 
-    var app = angular.module("app");
+widgetHeader.$inject = [];
+export function widgetHeader() {
+    //Usage:
+    //<div widget-header title="vm.map.title"></div>
+    var directive = {
+        link: link,
+        restrict: "A",
+        scope: {
+            "title": "@",
+            "subtitle": "@",
+            "rightText": "@",
+            "allowCollapse": "@"
+        },
+        template: require("./widgetHeader.html")
+    };
+    return directive;
 
-    app.directive("widgetHeader", [function() {
-        //Usage:
-        //<div widget-header title="vm.map.title"></div>
-        var directive = {
-            link: link,
-            restrict: "A",
-            scope: {
-                "title": "@",
-                "subtitle": "@",
-                "rightText": "@",
-                "allowCollapse": "@"
-            },
-            templateUrl: "app/directives/widgetHeader.html"
-        };
-        return directive;
-
-        function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
-            attrs.$set("class", "widget-head");
-        }
-    }]);
-})();
+    function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
+        attrs.$set("class", "widget-head");
+    }
+}

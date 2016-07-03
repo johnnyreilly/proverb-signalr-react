@@ -1,45 +1,94 @@
-// Karma configuration
-// Generated on Thu Jul 16 2015 21:14:44 GMT+0100 (GMT Summer Time)
+/* eslint-disable no-var, strict */
+'use strict';
+var path = require('path');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config.js');
 
 module.exports = function(config) {
-  var gulpConfig = require("./gulpfile.config.js");
-  var scripts = [].concat(
-    gulpConfig.getBowerScriptsOrStyles('js'),
-    'bower_components/angular-mocks/angular-mocks.js',
-    gulpConfig.scripts.map(function(s) { return s.replace('.{ts,js.map,js}', '.js'); }),
-    gulpConfig.tests);
-
+  // Documentation: https://karma-runner.github.io/0.13/config/configuration-file.html
   config.set({
+    browsers: [ 'PhantomJS' ],
 
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine'],
+    files: [
+      // This ensures we have the es6 shims in place from babel and that angular and angular-mocks are loaded
+      // and then loads all the tests
+      'test/main.js'
+    ],
 
-    // list of files / patterns to load in the browser
-    files: scripts,
+    port: 9876,
 
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'junit'],
+    frameworks: [ 'jasmine' ],
 
-    // the default configuration
-    junitReporter: {
-      outputDir: 'test-results', // results will be saved as $outputDir/$browserName.xml
-      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
-      suite: ''
+    logLevel: config.LOG_INFO, //config.LOG_DEBUG
+
+    preprocessors: {
+      'test/main.js': [ 'webpack', 'sourcemap' ]
     },
 
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DEBUG,
+    webpack: {
+      devtool: 'inline-source-map',
+      debug: true,
+      module: {
+          loaders: webpackConfig.module.loaders,
+          postLoaders: [ { //delays coverage til after tests are run, fixing transpiled source coverage error
+            test: /\.ts(x?)$/,
+            exclude: [
+                path.resolve('test/'),
+                path.resolve('node_modules/')
+            ],
+            loader: 'istanbul-instrumenter' } ]
+      },
+      plugins: [
+        new webpack.DefinePlugin({
+            __IN_DEBUG__: false,
+            __VERSION__: JSON.stringify('tests')
+        })
+      ],
+      resolve: webpackConfig.resolve
+    },
 
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [/*'Chrome',*/ 'PhantomJS'],
+    webpackMiddleware: {
+      quiet: true,
+      stats: {
+        colors: true
+      }
+    },
 
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    // reporter options
+    mochaReporter: {
+      colors: {
+        success: 'bgGreen',
+        info: 'cyan',
+        warning: 'bgBlue',
+        error: 'bgRed'
+      }
+    },
+
+    coverageReporter: {
+        instrumenterOptions: {
+            istanbul: { noCompact: true }
+        },
+        reporters: [
+            {
+                dir: 'reports/coverage/',
+                subdir: '.',
+                type: 'html'
+            },{
+                dir: 'reports/coverage/',
+                subdir: '.',
+                type: 'cobertura'
+            }, {
+                dir: 'reports/coverage/',
+                subdir: '.',
+                type: 'json'
+            }
+        ]
+    },
+
+    junitReporter: {
+      outputDir: 'reports/test', // results will be saved as $outputDir/$browserName.xml
+      outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
+      suite: ''
+    }
   });
 };

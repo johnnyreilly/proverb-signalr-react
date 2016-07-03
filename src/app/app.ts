@@ -1,13 +1,15 @@
-interface bootstrapper {
-    thirdPartyLibs: thirdPartyLibs;
-    appConfig: appConfig;
-}
+import angular from "angular";
+import "angular-animate";
+import "angular-sanitize";
+import "angular-ui-bootstrap";
+import "angular-ui-router";
+import toastr from "toastr";
+import moment from "moment";
 
-interface thirdPartyLibs {
-    moment: moment.MomentStatic;
-    toastr: Toastr;
-    underscore: UnderscoreStatic;
-}
+import { commonConfigProvider } from "./common/common";
+import { LoggerService } from "./common/logger";
+import createApp from "./app.register";
+import { getRoutes, configureRoutes, getTemplatesToCache } from "./app.routes";
 
 interface appConfig {
     appName: string;
@@ -17,7 +19,7 @@ interface appConfig {
     version: string;
 }
 
-interface configEvents {
+export interface configEvents {
     controllerActivateSuccess: string;
     failure: string;
     spinnerToggle: string;
@@ -25,7 +27,7 @@ interface configEvents {
     waiterSuccess: string;
 }
 
-interface config extends appConfig {
+export interface config extends appConfig {
     appErrorPrefix: string;
     docTitle: string;
     events: configEvents;
@@ -36,214 +38,163 @@ interface config extends appConfig {
     urlCacheBusterSuffix: string;
 }
 
-var angularApp = (function () {
-    "use strict";
+/**
+ * Add 3rd party libraries to Angular app
+ */
+function addThirdPartyLibs(app: ng.IModule) {
 
-    var appName = "app";
+    // Toastr
+    toastr.options.timeOut = 4000;
+    toastr.options.positionClass = "toast-bottom-right";
+    app.constant("toastr", toastr);
 
-    // Create Angular "app" module so all modules that depend on it use it
-    var app = angular.module(appName, [
-    // Angular modules
-        "ngAnimate",        // animations
-        "ngRoute",          // routing
-        "ngSanitize",       // sanitizes html bindings (ex: sidebar.js)
+    // Moment
+    app.constant("moment", moment);
+}
 
-    // Custom modules
-        "common",           // common functions, logger, spinner
-        "common.bootstrap", // bootstrap dialog wrapper functions
+/**
+ * Configure application
+ */
+function configureApp(app: ng.IModule, appConfig: appConfig) {
 
-    // 3rd Party Modules
-        "ui.bootstrap"      // ui-bootstrap (ex: carousel, pagination, dialog)
-    ]);
+    const config: config = {
+        appErrorPrefix: "[Error] ", //Configure the exceptionHandler decorator
+        appName: appConfig.appName,
+        appRoot: appConfig.appRoot,
+        docTitle: appConfig.appName + ": ",
+        events: {
+            controllerActivateSuccess: "controller.activateSuccess",
+            failure: "failure",
+            spinnerToggle: "spinner.toggle",
+            waiterStart: "waiter.start",
+            waiterSuccess: "waiter.success"
+        },
+        inDebug: appConfig.inDebug,
+        remoteServiceRoot: appConfig.remoteServiceRoot,
+        urlCacheBusterSuffix: "?v=" + ((appConfig.inDebug) ? Date.now().toString() : appConfig.version),
+        version: appConfig.version
+    };
 
-    return {
-        start: start
-    }
+    app.value("config", config);
 
-    /**
-     * Add 3rd party libraries to Angular app
-     */
-    function addThirdPartyLibs(thirdPartyLibs: thirdPartyLibs) {
+    app.config(["$logProvider", "$compileProvider", (
+        $logProvider: ng.ILogProvider,
+        $compileProvider: ng.ICompileProvider
+    ) => {
+        $logProvider.debugEnabled(config.inDebug);
+        $compileProvider.debugInfoEnabled(config.inDebug);
+    }]);
 
-        // Toastr
-        var toastr = thirdPartyLibs.toastr;
-        toastr.options.timeOut = 4000;
-        toastr.options.positionClass = "toast-bottom-right";
-        app.constant("toastr", toastr);
+    // Copy across config settings to commonConfigProvider to configure the common services
+    app.config(["commonConfigProvider", function (commonConfigProvider: commonConfigProvider) {
 
-        // Underscore
-        var _ = thirdPartyLibs.underscore;
-        app.constant("_", _);
+        // Copy events across from config.events
+        commonConfigProvider.config.events = Object.assign({}, config.events);
+    }]);
+}
 
-        // Moment
-        var moment = thirdPartyLibs.moment;
-        app.constant("moment", moment);
-    }
+/**
+ * Configure the HTTP Provider
+ */
+function configureHttpProvider(app: ng.IModule) {
 
-    /**
-     * Configure application
-     */
-    function configureApp(appConfig: appConfig) {
+    const serviceId = "urlInterceptor";
+    app.factory(serviceId, ["$templateCache", "config", function ($templateCache: angular.ITemplateCacheService, config: config) {
 
-        var config: config = {
-            appErrorPrefix: "[Error] ", //Configure the exceptionHandler decorator
-            appName: appConfig.appName,
-            appRoot: appConfig.appRoot,
-            docTitle: appConfig.appName + ": ",
-            events: {
-                controllerActivateSuccess: "controller.activateSuccess",
-                failure: "failure",
-                spinnerToggle: "spinner.toggle",
-                waiterStart: "waiter.start",
-                waiterSuccess: "waiter.success"
-            },
-            inDebug: appConfig.inDebug,
-            remoteServiceRoot: appConfig.remoteServiceRoot,
-            urlCacheBusterSuffix: "?v=" + ((appConfig.inDebug) ? Date.now().toString() : appConfig.version),
-            version: appConfig.version
+        const service = {
+            request: request
         };
 
-        app.value("config", config);
+        return service;
 
-        app.config(["$logProvider", function ($logProvider: angular.ILogProvider) {
-            // turn debugging off/on (no info or warn)
-            if ($logProvider.debugEnabled) {
-                $logProvider.debugEnabled(config.inDebug);
-            }
-        }]);
+        function request(requestConfig: angular.IRequestConfig) {
 
-        // Copy across config settings to commonConfigProvider to configure the common services
-        app.config(["commonConfigProvider", function (commonConfigProvider: commonConfigProvider) {
+            // For the loading of HTML templates we want the appRoot to be prefixed to the path
+            // and we want a suffix to either allow caching or prevent caching
+            // (depending on whether in debug mode or not)
+            if (requestConfig.method === "GET" && endsWith(requestConfig.url.toLowerCase(), ".html")) {
 
-            // Copy events across from config.events
-            commonConfigProvider.config.events = _.extend({}, config.events);
-        }]);
-    }
-
-    /**
-     * Configure the HTTP Provider
-     */
-    function configureHttpProvider() {
-
-        var serviceId = "urlInterceptor";
-        app.factory(serviceId, ["$templateCache", "config", function ($templateCache: angular.ITemplateCacheService, config: config) {
-
-            var service = {
-                request: request
-            };
-
-            return service;
-
-            function request(requestConfig: angular.IRequestConfig) {
-
-                // For the loading of HTML templates we want the appRoot to be prefixed to the path
-                // and we want a suffix to either allow caching or prevent caching
-                // (depending on whether in debug mode or not)
-                if (requestConfig.method === "GET" && endsWith(requestConfig.url.toLowerCase(), ".html")) {
-
-                    // If this has already been placed into a primed template cache then we should leave the URL as is
-                    // so that the version in templateCache is served.  If we tweak the URL then it will not be found
-                    var cachedAlready = $templateCache.get(requestConfig.url);
-                    if (!cachedAlready) {
-                        requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
-                    }
-
-                    let i = 2;
+                // If this has already been placed into a primed template cache then we should leave the URL as is
+                // so that the version in templateCache is served.  If we tweak the URL then it will not be found
+                const cachedAlready = $templateCache.get(requestConfig.url);
+                if (!cachedAlready) {
+                    requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
                 }
 
-                return requestConfig;
+                let i = 2;
             }
 
-            function endsWith(str: string, suffix: string) {
-                return str.indexOf(suffix, str.length - suffix.length) !== -1;
-            }
-        }]);
+            return requestConfig;
+        }
 
-        app.config(["$httpProvider", function ($httpProvider: angular.IHttpProvider) {
-            $httpProvider.interceptors.push(serviceId);
-        }]);
-    }
+        function endsWith(str: string, suffix: string) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        }
+    }]);
 
-    /**
-     * Configure the routes and route resolvers
-     */
-    function configureRoutes() {
+    app.config(["$httpProvider", function ($httpProvider: angular.IHttpProvider) {
+        $httpProvider.interceptors.push(serviceId);
+    }]);
+}
 
-        var routesConfigured = false;
-        app.config(["$routeProvider", "routes", function ($routeProvider: angular.route.IRouteProvider, routes: configRoute[]) {
+/**
+ * Configure by setting an optional string value for appErrorPrefix.
+ * Accessible via config.appErrorPrefix (via config value).
+ */
+function decorateExceptionHandler(app: ng.IModule) {
 
-            // Ensure routes are only configured once (unit tests attempt to configure twice)
-            if (routesConfigured) { return; }
+    app.config(["$provide", function ($provide: angular.auto.IProvideService) {
 
-            routes.forEach(function (r) {
-                $routeProvider.when(r.url, r.config);
-            });
-            $routeProvider.otherwise({ redirectTo: "/" });
+        // Extend the $exceptionHandler service to also display a toast.
+        $provide.decorator("$exceptionHandler",
+            ["$delegate", "config", "logger", extendExceptionHandler]);
 
-            routesConfigured = true;
-        }]);
+        function extendExceptionHandler($delegate: angular.IExceptionHandlerService, config: config, logger: LoggerService) {
+            const appErrorPrefix = config.appErrorPrefix;
+            const logError = logger.getLogFn("app", "error");
+            return function (exception: Error, cause: string) {
+                $delegate(exception, cause);
+                if (appErrorPrefix && exception.message.indexOf(appErrorPrefix) === 0) { return; }
 
-    }
+                const errorData = { exception: exception, cause: cause };
+                const msg = appErrorPrefix + exception.message;
+                logError(msg, errorData, true);
+            };
+        }
+    }]);
+}
 
-    /**
-     * Configure by setting an optional string value for appErrorPrefix.
-     * Accessible via config.appErrorPrefix (via config value).
-     */
-    function decorateExceptionHandler() {
+function registerRoutes(app: ng.IModule) {
+    app.constant("routes", getRoutes());
+    app.config(configureRoutes);
+}
 
-        app.config(["$provide", function ($provide: angular.auto.IProvideService) {
+function registerTemplatesToCache(app: ng.IModule) {
+    app.run(["$templateCache",
+    ($templateCache: ng.ITemplateCacheService) => {
+        getTemplatesToCache().forEach((template, url) => {
+            $templateCache.put(url, template);
+        })
+    }]);
+}
 
-            // Extend the $exceptionHandler service to also display a toast.
-            $provide.decorator("$exceptionHandler",
-                ["$delegate", "config", "logger", extendExceptionHandler]);
+function initialise(appConfig: appConfig) {
 
-            function extendExceptionHandler($delegate: angular.IExceptionHandlerService, config: config, logger: logger.logger) {
-                var appErrorPrefix = config.appErrorPrefix;
-                var logError = logger.getLogFn("app", "error");
-                return function (exception: Error, cause: string) {
-                    $delegate(exception, cause);
-                    if (appErrorPrefix && exception.message.indexOf(appErrorPrefix) === 0) { return; }
+    const app = createApp();
 
-                    var errorData = { exception: exception, cause: cause };
-                    var msg = appErrorPrefix + exception.message;
-                    logError(msg, errorData, true);
-                };
-            }
-        }]);
+    addThirdPartyLibs(app);
 
-    }
+    configureApp(app, appConfig);
 
-    function initialise(bootstrapper: bootstrapper) {
+    decorateExceptionHandler(app);
 
-        addThirdPartyLibs(bootstrapper.thirdPartyLibs);
+    configureHttpProvider(app);
 
-        configureApp(bootstrapper.appConfig);
+    registerRoutes(app);
 
-        decorateExceptionHandler();
+    registerTemplatesToCache(app);
 
-        configureRoutes();
+    return app.name;
+}
 
-        configureHttpProvider();
-
-        // Handle routing errors and success events
-        app.run(["$route", function ($route: angular.route.IRouteService) {
-            // Include $route to kick start the router.
-        }]);
-    }
-
-    /**
-     * Initialise and then start the application
-     *
-     * @param bootstrapper The 3rd party libraries and app config data from the server
-     */
-    function start(bootstrapper: bootstrapper) {
-
-        // Initialise the app
-        initialise(bootstrapper);
-
-        // Start Angular
-        angular.element(document).ready(function () {
-            angular.bootstrap(document, [appName]);
-        });
-    }
-})();
+export default initialise;

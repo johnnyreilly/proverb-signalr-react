@@ -1,128 +1,116 @@
-module logger {
+export interface loggerFunction {
+    (message: string, data?: Object, showToast?: boolean): void;
+}
 
-    "use strict";
+export interface loggers {
+    info: loggerFunction;
+    error: loggerFunction;
+    success: loggerFunction;
+    warn: loggerFunction;
+}
 
-    export interface loggerFunction {
-        (message: string, data?: Object, showToast?: boolean): void;
+interface loggerFunctionWithSource {
+    (message: string, data: Object, source: string, showToast: boolean): void;
+}
+
+interface loggerInternals {
+    [fnName: string]: any;
+    logError: loggerFunctionWithSource;
+    logInfo: loggerFunctionWithSource;
+    logSuccess: loggerFunctionWithSource;
+    logWarning: loggerFunctionWithSource;
+}
+
+export const loggerServiceName = "logger";
+
+export class LoggerService {
+
+    internals: loggerInternals;
+    static $inject = ["$log", "toastr"];
+    constructor(private $log: ng.ILogService, private toastr: Toastr) {
+        this.internals = {
+            logError: this.logError,
+            logInfo: this.logInfo,
+            logSuccess: this.logSuccess,
+            logWarning: this.logWarning
+        }
     }
 
-    export interface logger {
-        getLogFn(moduleId: string, fnName?: string): loggerFunction;
-        getLoggers(moduleId: string): loggers;
-    }
+    getLogFn(moduleId: string, fnName?: string) {
+        fnName = fnName || "info";
+        switch (fnName.toLowerCase()) { // convert aliases
+            case "success":
+                fnName = "logSuccess"; break;
+            case "error":
+                fnName = "logError"; break;
+            case "warn":
+                fnName = "logWarning"; break;
+            default:
+                fnName = "logInfo"; break;
+        }
 
-    export interface loggers {
-        info: loggerFunction;
-        error: loggerFunction;
-        success: loggerFunction;
-        warn: loggerFunction;
-    }
+        var logFn: loggerFunctionWithSource = this.internals[fnName] || this.internals.logInfo;
+        return function (msg: string, data: Object, showToast: boolean) {
 
-    interface loggerFunctionWithSource {
-        (message: string, data: Object, source: string, showToast: boolean): void;
-    }
+            var displayToast = (showToast === undefined)
+                ? (fnName !== "logInfo") ? true : false
+                : showToast;
 
-    interface loggerInternals {
-        [fnName: string]: any;
-        logError: loggerFunctionWithSource;
-        logInfo: loggerFunctionWithSource;
-        logSuccess: loggerFunctionWithSource;
-        logWarning: loggerFunctionWithSource;
-    }
-
-    angular.module("common").factory("logger", ["$log", "toastr", logger]);
-
-    function logger($log: ng.ILogService, toastr: Toastr) {
-        var service: logger = {
-            getLogFn: getLogFn,
-            getLoggers: getLoggers
+            logFn(msg, data, moduleId, displayToast);
         };
+    }
 
-        var internals: loggerInternals = {
-            logError: logError,
-            logInfo: logInfo,
-            logSuccess: logSuccess,
-            logWarning: logWarning
-        };
+    getLoggers(moduleId: string): loggers {
 
-        return service;
+        return {
+            error: this.getLogFn(moduleId, "error"),
+            info: this.getLogFn(moduleId, "info"),
+            success: this.getLogFn(moduleId, "success"),
+            warn: this.getLogFn(moduleId, "warn")
+        }
+    }
 
-        function getLogFn(moduleId: string, fnName?: string) {
-            fnName = fnName || "info";
-            switch (fnName.toLowerCase()) { // convert aliases
-                case "success":
-                    fnName = "logSuccess"; break;
-                case "error":
-                    fnName = "logError"; break;
-                case "warn":
-                    fnName = "logWarning"; break;
-                default:
-                    fnName = "logInfo"; break;
-            }
+    logInfo = (message: string, data: Object, source: string, showToast: boolean) => {
+        this.logIt(message, data, source, showToast, "info");
+    }
 
-            var logFn: loggerFunctionWithSource = internals[fnName] || internals.logInfo;
-            return function (msg: string, data: Object, showToast: boolean) {
+    logWarning = (message: string, data: Object, source: string, showToast: boolean) => {
+        this.logIt(message, data, source, showToast, "warning");
+    }
 
-                var displayToast = (showToast === undefined)
-                    ? (fnName !== "logInfo") ? true : false
-                    : showToast;
+    logSuccess = (message: string, data: Object, source: string, showToast: boolean) => {
+        this.logIt(message, data, source, showToast, "success");
+    }
 
-                logFn(msg, data, moduleId, displayToast);
-            };
+    logError = (message: string, data: Object, source: string, showToast: boolean) => {
+        this.logIt(message, data, source, showToast, "error");
+    }
+
+    logIt(message: string, data: Object, source: string, showToast: boolean, logType: string) {
+
+        var logger: ng.ILogCall;
+        var toastType: ToastrDisplayMethod;
+
+        if (logType === "error") {
+            logger = this.$log.error;
+            toastType = this.toastr.error;
+        } else if (logType === "warning") {
+            logger = this.$log.warn;
+            toastType = this.toastr.warning;
+        } else if (logType === "success") {
+            logger = this.$log.log;
+            toastType = this.toastr.success;
+        } else {
+            logger = this.$log.debug;
+            toastType = this.toastr.info;
         }
 
-        function getLoggers(moduleId: string): loggers {
+        source = source ? "[" + source + "] " : "";
 
-            return {
-                error: getLogFn(moduleId, "error"),
-                info: getLogFn(moduleId, "info"),
-                success: getLogFn(moduleId, "success"),
-                warn: getLogFn(moduleId, "warn")
-            }
-        }
+        // Perform log 
+        logger(source, message, data);
 
-        function logInfo(message: string, data: Object, source: string, showToast: boolean) {
-            logIt(message, data, source, showToast, "info");
-        }
-
-        function logWarning(message: string, data: Object, source: string, showToast: boolean) {
-            logIt(message, data, source, showToast, "warning");
-        }
-
-        function logSuccess(message: string, data: Object, source: string, showToast: boolean) {
-            logIt(message, data, source, showToast, "success");
-        }
-
-        function logError(message: string, data: Object, source: string, showToast: boolean) {
-            logIt(message, data, source, showToast, "error");
-        }
-
-        function logIt(message: string, data: Object, source: string, showToast: boolean, logType: string) {
-
-            var logger: ng.ILogCall;
-            var toastType: ToastrDisplayMethod;
-
-            if (logType === "error") {
-                logger = $log.error;
-                toastType = toastr.error;
-            } else if (logType === "warning") {
-                logger = $log.warn;
-                toastType = toastr.warning;
-            } else if (logType === "success") {
-                logger = $log.log;
-                toastType = toastr.success;
-            } else {
-                logger = $log.debug;
-                toastType = toastr.info;
-            }
-
-            source = source ? "[" + source + "] " : "";
-
-            // Perform log 
-            logger(source, message, data);
-
-            // Show toast if required
-            if (showToast) { toastType(message); }
-        }
+        // Show toast if required
+        if (showToast) { toastType(message); }
     }
 }

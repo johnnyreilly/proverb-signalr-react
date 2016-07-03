@@ -1,205 +1,94 @@
+﻿/* eslint-disable no-var, strict, prefer-arrow-callback */
+'use strict';
+
 var gulp = require('gulp');
+var gutil = require('gulp-util');
+var eslint = require('gulp-eslint');
+var tslint = require("gulp-tslint");
+var yargs = require("yargs").argv;
 
-// Include Our Plugins
-var concat = require('gulp-concat');
-var ignore = require('gulp-ignore');
-var less = require('gulp-less');
-var sourcemaps = require('gulp-sourcemaps');
-var minifyCss = require('gulp-minify-css');
-var uglify = require('gulp-uglify');
-var rev = require('gulp-rev');
-var del = require('del');
-var path = require('path');
-var templateCache = require('gulp-angular-templatecache');
-var eventStream = require('event-stream');
-var order = require('gulp-order');
-var gulpUtil = require('gulp-util');
-var wiredep = require('wiredep');
-var inject = require('gulp-inject');
-var print = require('gulp-print');
-//var yargs = require('yargs').argv;
+var less = require('./gulp/less');
+var webpack = require('./gulp/webpack');
+var staticFiles = require('./gulp/staticFiles');
+var tests = require('./gulp/tests');
+var clean = require('./gulp/clean');
+var inject = require('./gulp/inject');
 
-// Get our config
-var config = require('./gulpfile.config.js');
+var isDebug = yargs.mode === "Debug";
 
-// Determine whether we are in debug mode by the value passed to gulp by Visual Studio in the csproj
-//var isDebug = yargs.mode === 'Debug';
-//gulpUtil.log(gulpUtil.colors.green('isDebug: ' + isDebug));
+var eslintSrcs = ['./gulp/**/*.js'];
+var tslintSrcs = ['./src/**/*.ts', './test/**/*.ts', '!**/*.d.ts'];
 
-/**
- * Get the scripts and the templates combined streams
- *
- * @param {boolean} isDebug
- */
-function getScriptsAndTemplates(isDebug) {
-
-    var options = isDebug ? { base: config.base } : undefined;
-    var appScripts = gulp.src(config.getScripts(), options);
-
-    //Get the view templates for $templateCache
-    var templates = gulp.src(config.templateFiles)
-        .pipe(templateCache({ module: 'app', root: 'app/' }));
-
-    var combined = eventStream.merge(appScripts, templates);
-
-    return combined;
-}
-
-gulp.task('clean', function (cb) {
-
-    gulpUtil.log('Delete the build folder');
-
-    return del([config.buildDir], { force: true }, cb);
+gulp.task('delete-dist-contents', function (done) {
+    clean.run(done);
 });
 
-gulp.task('boot-dependencies', ['clean'], function () {
-
-    gulpUtil.log('Get dependencies needed for boot (jQuery)');
-
-    return gulp.src(config.bootjQuery)
-      .pipe(gulp.dest(config.buildDir));
+gulp.task('build-process.env.NODE_ENV', function () {
+    process.env.NODE_ENV = 'production';
 });
 
-gulp.task('images', ['clean'], function () {
-
-    gulpUtil.log('Get images');
-
-    return gulp.src(config.images/*, { base: config.base }*/) // THE base looks wrong
-        .pipe(gulp.dest(config.buildDir + 'images'));
+gulp.task('build-less', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function(done) {
+  less.build().then(function() { done(); });
 });
 
-gulp.task('inject-debug', ['styles-debug', 'scripts-debug'], function () {
-
-    gulpUtil.log('Inject debug links and script tags into ' + config.bootFile);
-
-    var scriptsAndStyles = [].concat(config.getScripts(), config.getStyles());
-
-    return gulp
-        .src(config.bootFile)
-        .pipe(inject(
-                  gulp.src([
-                          config.debugFolder + '**/*.{js,css}',
-                          '!build\\debug\\bower_components\\spin.js' // Exclude weird spin js path
-                      ], { read: false })
-                      .pipe(order(scriptsAndStyles)),
-                  { ignorePath: '/build/' })
-        )
-        .pipe(gulp.dest(config.buildDir));
+gulp.task('build-js', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function (done) {
+    webpack.build().then(function () { done(); });
 });
 
-gulp.task('inject-release', ['styles-release', 'scripts-release'], function () {
-
-    gulpUtil.log('Inject release links and script tags into ' + config.bootFile);
-
-    return gulp
-        .src(config.bootFile)
-        .pipe(inject(
-                  gulp.src(config.releaseFolder + '**/*.{js,css}', { read: false }),
-                  { ignorePath: '/build/', addRootSlash: false, removeTags: true })
-        )
-        .pipe(gulp.dest(config.buildDir));
+gulp.task('build-other', ['delete-dist-contents', 'build-process.env.NODE_ENV'], function () {
+    staticFiles.build();
 });
 
-gulp.task('scripts-debug', ['clean'], function () {
-
-    gulpUtil.log('Copy across all JavaScript files to build/debug');
-
-    return getScriptsAndTemplates(true)
-        .pipe(gulp.dest(config.debugFolder));
+gulp.task('run-tests', [], function (done) {
+    tests.run(done);
 });
 
-gulp.task('scripts-release', ['clean'], function () {
-
-    gulpUtil.log('Concatenate & Minify JS for release into a single file');
-
-    return getScriptsAndTemplates(false)
-        .pipe(ignore.exclude('**/*.{ts,js.map}')) // Exclude ts and js.map files - not needed in release mode
-        .pipe(concat('app.js'))                   // Make a single file
-        .pipe(uglify())                           // Make the file titchy tiny small
-        .pipe(rev())                              // Suffix a version number to it
-        .pipe(gulp.dest(config.releaseFolder));   // Write single versioned file to build/release folder
+gulp.task('build-release', ['build-less', 'build-js', 'build-other', 'eslint', 'tslint'], function () {
+    inject.build();
 });
 
-gulp.task('styles-debug', ['clean'], function () {
-
-    gulpUtil.log('Copy across all CSS files to build/debug');
-
-    var bowerCss = gulp.src(config.getStyles(), { base: config.base });
-
-    //gulpUtil.log('config.styles: ' + config.styles);
-
-    var appCss = gulp.src(config.styles)
-        // .pipe(print())
-        .pipe(sourcemaps.init())
-        .pipe(less())
-        .pipe(sourcemaps.write());
-
-    return eventStream.merge(bowerCss, appCss)
-        // .pipe(print())
-        .pipe(gulp.dest(config.debugFolder));
-});
-
-gulp.task('styles-release', ['clean'], function () {
-
-    gulpUtil.log('Copy across all files in config.styles to build/debug');
-
-    var bowerCss = gulp.src(config.getStyles());
-    var appCss = gulp.src(config.styles).pipe(less());
-
-    return eventStream.merge(bowerCss, appCss)
-        .pipe(concat('app.css'))                                   // Make a single file
-        .pipe(minifyCss())                                         // Make the file titchy tiny small
-        .pipe(rev())                                               // Suffix a version number to it
-        .pipe(gulp.dest(config.releaseFolder + '/' + config.css)); // Write single versioned file to build/release folder
-});
-
-gulp.task('fonts-debug', ['clean'], function () {
-
-    gulpUtil.log('Copy across all fonts in config.fonts to debug location');
-
-    return gulp
-        .src(config.fonts, { base: config.base })
-        .pipe(gulp.dest(config.debugFolder));
-});
-
-gulp.task('fonts-release', ['clean'], function () {
-
-    gulpUtil.log('Copy across all fonts in config.fonts to release location');
-
-    return gulp
-        .src(config.fonts)
-        .pipe(gulp.dest(config.releaseFolder + '/fonts'));
-});
-
-gulp.task('build-debug', [
-    'boot-dependencies', 'images', 'inject-debug', 'fonts-debug', 'test'
-]);
-
-gulp.task('build-release', [
-    'boot-dependencies', 'images', 'inject-release', 'fonts-release', 'test'
-]);
-
-gulp.task('bower-install', function() {
-  var bower = require('gulp-bower');
-  return bower();
-});
-
-gulp.task('test', function(done) {
-  var Server = require('karma').Server;
-
-  new Server({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true
-  }, karmaCompleted).start();
-
-  function karmaCompleted(karmaResult) {
-    gulpUtil.log('Karma completed!');
-    if (karmaResult === 1) {
-      done('karma: tests failed with code ' + karmaResult);
-    } else {
-      done();
+gulp.task('build', isDebug ? [] : ['build-release'], function () {
+    if (isDebug) {
+        gutil.log(gutil.colors.red("In debug mode so not building client side code; your gulp watch task should be running. Type 'npm run watch' at the command prompt in the project directory"));
     }
-  }
 });
 
-//gulp.task('default', [(isDebug ? 'build-debug' : 'build-release')]);
+gulp.task('eslint', function () {
+    return gulp.src(eslintSrcs)
+      .pipe(eslint())
+      .pipe(eslint.format());
+});
+
+gulp.task('tslint', function () {
+    return gulp.src(tslintSrcs)
+      .pipe(tslint())
+      .pipe(tslint.report("verbose"))
+});
+
+gulp.task('watch', ['delete-dist-contents'], function (done) {
+    process.env.NODE_ENV = 'development';
+    Promise.all([
+      webpack.watch(),
+      less.watch()
+    ]).then(function () {
+        gutil.log('Now that initial assets (js and css) are generated injection starts...');
+        inject.watch();
+        done();
+    }).catch(function (error) {
+        gutil.log('Problem generating initial assets (js and css)', error);
+    });
+
+    gulp.watch(eslintSrcs, ['eslint']);
+    //gulp.watch(tslintSrcs, ['tslint']);
+    staticFiles.watch();
+    //tests.watch();
+});
+
+gulp.task('serve', ['watch'], function() {
+  // local as not required for build
+  var express = require('express')
+  var app = express()
+
+  app.use(express.static('dist', {'index': 'index.html'}))
+  app.listen(7777);
+});

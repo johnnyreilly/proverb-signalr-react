@@ -1,31 +1,22 @@
-interface spinner {
-    spinnerHide: () => void;
-    spinnerShow: () => void;
-}
+import { common, commonConfigProvider } from "./common";
 
-(function () {
-    "use strict";
+export const spinnerServiceName = "spinner";
 
-    // Must configure the common service and set its 
-    // events via the commonConfigProvider
+export class SpinnerService {
 
-    angular.module("common")
-        .factory("spinner", ["common", "commonConfig", spinner]);
-
-    function spinner(common: common, commonConfigProvider: commonConfigProvider) {
-        var service: spinner = {
-            spinnerHide: spinnerHide,
-            spinnerShow: spinnerShow
-        };
-
-        return service;
-
-        function spinnerHide() { spinnerToggle(false); }
-
-        function spinnerShow() { spinnerToggle(true); }
-
-        function spinnerToggle(show: boolean) {
-            common.$broadcast(commonConfigProvider.config.events.spinnerToggle, { show: show });
-        }
+    static $inject = ["common", "commonConfig"];
+    constructor(private common: common, private commonConfigProvider: commonConfigProvider) {
     }
-})();
+    
+    spinnerHide() { 
+        this.spinnerToggle(false); 
+    }
+    
+    spinnerShow() { 
+        this.spinnerToggle(true); 
+    }
+
+    spinnerToggle(show: boolean) {
+        this.common.$broadcast(this.commonConfigProvider.config.events.spinnerToggle, { show: show });
+    }
+}

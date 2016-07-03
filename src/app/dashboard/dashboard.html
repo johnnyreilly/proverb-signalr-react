@@ -1,4 +1,4 @@
-﻿<section id="dashboard-view" class="mainbar" ng-controller="dashboard as vm">
+﻿<section id="dashboard-view" class="mainbar">
     <section class="matter">
         <div class="container">
             <div class="row">
@@ -25,8 +25,8 @@
                                 </thead>
                                 <tbody>
                                     <tr data-ng-repeat="s in vm.sages">
-                                        <td><a ng-href="#/sayings/?sageId={{s.id}}">{{s.name}}</a></td>
-                                        <td><a ng-href="#/sayings/?sageId={{s.id}}">{{s.userName}}</a></td>
+                                        <td><a ui-sref="sayings({sageId: s.id})">{{s.name}}</a></td>
+                                        <td><a ui-sref="sayings({sageId: s.id})">{{s.userName}}</a></td>
                                     </tr>
                                 </tbody>
                             </table>

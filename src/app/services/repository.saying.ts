@@ -1,83 +1,71 @@
-﻿interface saying {
+﻿import { common } from "../common/common";
+import { config } from "../app";
+import { loggerFunction } from "../common/logger";
+import { sage } from "./repository.sage";
+
+export interface saying {
     id: number;
     sageId: number;
     sage?: sage;
     text: string;
 }
 
-interface repositorySaying {
-    getAll: () => ng.IPromise<saying[]>;
-    getById: (id: number, forceRemote?: boolean) => ng.IPromise<saying>;
-    remove: (id: number) => ng.IPromise<void>;
-    save: (saying: saying) => ng.IPromise<number>;
-}
+export const repositorySayingServiceName = "repository.saying";
 
-(function () {
-    "use strict";
+export class RepositorySayingService {
 
-    var serviceId = "repository.saying";
-    angular.module("app").factory(serviceId, ["$http", "common", "config", repositorySaying]);
+    log: loggerFunction;
+    rootUrl: string;
+    cache: Map<number, saying>;
 
-    function repositorySaying($http: ng.IHttpService, common: common, config: config) {
-
-        var $q = common.$q;
-        var cache: { [id: number]: saying } = {};
-        var log = common.logger.getLogFn(serviceId);
-        var rootUrl = config.remoteServiceRoot + "saying";
-
-        var service: repositorySaying = {
-            getAll: getAll,
-            getById: getById,
-            remove: remove,
-            save: save
-        };
-
-        return service;
-
-        function getAll() {
-            return $http.get<saying[]>(rootUrl).then(response => {
-                var sayings = response.data;
-                log(sayings.length + " Sayings loaded");
-                return sayings;
-            });
-        }
-
-        function getById(id: number, forceRemote?: boolean) {
-
-            var saying: saying;
-            if (!forceRemote) {
-                saying = cache[id];
-                if (saying) {
-                    log("Saying [id: " + saying.id + "] loaded from cache");
-                    return $q.when(saying);
-                }
-            }
-
-            return $http.get<saying>(rootUrl + "/" + id).then(response => {
-                saying = response.data;
-                cache[saying.id] = saying;
-                log("Saying [id: " + saying.id + "] loaded");
-                return saying;
-            });
-        }
-
-        function remove(id: number) {
-
-            return $http.delete<void>(rootUrl + "/" + id).then(response => {
-                log("Saying [id: " + id + "] removed");
-
-                return response.data;
-            }, errorReason => $q.reject(errorReason.data));
-        }
-
-        function save(saying: saying) {
-            return $http.post<number>(rootUrl, saying).then(response => {
-                var sayingId = response.data || saying.id;
-
-                log("Saying [id: " + sayingId + "] saved");
-
-                return sayingId;
-            }, errorReason => $q.reject(errorReason.data));
-        }
+    static $inject = ["$http", "common", "config"];
+    constructor(private $http: ng.IHttpService, private common: common, private config: config) {
+        this.log = common.logger.getLogFn(repositorySayingServiceName);
+        this.rootUrl = config.remoteServiceRoot + "saying";
+        this.cache = new Map();
     }
-})();
+
+    getAll() {
+        return this.$http.get<saying[]>(this.rootUrl).then(response => {
+            var sayings = response.data;
+            this.log(sayings.length + " Sayings loaded");
+            return sayings;
+        });
+    }
+
+    getById(id: number, forceRemote?: boolean) {
+        var saying: saying;
+        if (!forceRemote) {
+            saying = this.cache.get(id);
+            if (saying) {
+                this.log("Saying [id: " + saying.id + "] loaded from cache");
+                return this.common.$q.when(saying);
+            }
+        }
+
+        return this.$http.get<saying>(this.rootUrl + "/" + id).then(response => {
+            saying = response.data;
+            this.cache.set(saying.id, saying);
+            this.log("Saying [id: " + saying.id + "] loaded");
+            return saying;
+        });
+    }
+
+    remove(id: number) {
+        return this.$http.delete<void>(this.rootUrl + "/" + id).then(response => {
+            this.log("Saying [id: " + id + "] removed");
+
+            return response.data;
+        }, errorReason => this.common.$q.reject(errorReason.data));
+    }
+
+    save(saying: saying) {
+        return this.$http.post<number>(this.rootUrl, saying).then(response => {
+            var sayingId = response.data || saying.id;
+
+            this.log("Saying [id: " + sayingId + "] saved");
+
+            return sayingId;
+        }, errorReason => this.common.$q.reject(errorReason.data));
+    }
+}

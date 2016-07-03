@@ -1,4 +1,6 @@
-﻿interface spinnerWindowService extends ng.IWindowService {
+﻿import Spinner from "spin.js";
+
+interface spinnerWindowService extends ng.IWindowService {
     Spinner: typeof Spinner;
 }
 
@@ -10,31 +12,28 @@ interface spinnerAttributes extends ng.IAttributes {
     spinner: any;
 }
 
-(function () {
-    "use strict";
+export const spinnerName = "spinner";
 
-    var app = angular.module("app");
+spinner.$inject = ["$window"];
+export function spinner($window: spinnerWindowService) {
+    // Description:
+    //  Creates a new Spinner and sets its options
+    // Usage:
+    //  <div spinner="vm.spinnerOptions"></div>
+    var directive = {
+        link: link,
+        restrict: "A"
+    };
+    return directive;
 
-    app.directive("spinner", ["$window", function ($window: spinnerWindowService) {
-        // Description:
-        //  Creates a new Spinner and sets its options
-        // Usage:
-        //  <div spinner="vm.spinnerOptions"></div>
-        var directive = {
-            link: link,
-            restrict: "A"
-        };
-        return directive;
-
-        function link(scope: spinnerScope, element: ng.IAugmentedJQuery, attrs: spinnerAttributes) {
-            scope.spinner = null;
-            scope.$watch(attrs.spinner, function (options) {
-                if (scope.spinner) {
-                    scope.spinner.stop();
-                }
-                scope.spinner = new $window.Spinner(options);
-                scope.spinner.spin(element[0]);
-            }, true);
-        }
-    }]);
-})();
+    function link(scope: spinnerScope, element: ng.IAugmentedJQuery, attrs: spinnerAttributes) {
+        scope.spinner = null;
+        scope.$watch(attrs.spinner, function (options) {
+            if (scope.spinner) {
+                scope.spinner.stop();
+            }
+            scope.spinner = new Spinner(options);
+            scope.spinner.spin(element[0]);
+        }, true);
+    }
+}

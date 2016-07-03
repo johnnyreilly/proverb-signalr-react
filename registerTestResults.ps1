@@ -1,6 +1,6 @@
 write-host "Present working directory: $($pwd)"
 
-$testsuites = [xml](get-content .\test-results\*.xml)
+$testsuites = [xml](get-content .\reports\test\*.xml)
 $anyFailures = $FALSE
 
 foreach ($testsuite in $testsuites.testsuite) {

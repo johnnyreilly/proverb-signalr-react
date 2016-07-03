@@ -1,25 +1,23 @@
-﻿(function () {
-    "use strict";
+﻿import { config } from "../app";
 
-    var app = angular.module("app");
+export const imgPersonName = "imgPerson";
 
-    app.directive("imgPerson", ["config", function (config: config) {
-        //Usage:
-        //<img img-person="{{s.speaker.imageSource}}"/>
-        var basePath = config.imageSettings.imageBasePath;
-        var unknownImage = config.imageSettings.unknownPersonImageSource;
-        var directive = {
-            link: link,
-            restrict: "A"
-        };
-        return directive;
+imgPerson.$inject = ["config"];
+export function imgPerson(config: config) {
+    //Usage:
+    //<img img-person="{{s.speaker.imageSource}}"/>
+    var basePath = config.imageSettings.imageBasePath;
+    var unknownImage = config.imageSettings.unknownPersonImageSource;
+    var directive = {
+        link: link,
+        restrict: "A"
+    };
+    return directive;
 
-        function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
-            attrs.$observe("ccImgPerson", function(value: string) {
-                value = basePath + (value || unknownImage);
-                attrs.$set("src", value);
-            });
-        }
-    }]);
-
-})(); 
+    function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
+        attrs.$observe("ccImgPerson", function(value: string) {
+            value = basePath + (value || unknownImage);
+            attrs.$set("src", value);
+        });
+    }
+}

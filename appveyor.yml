@@ -1,11 +1,14 @@
 version: 1.0.{build}
 
-# environment variables
 environment:
+  nodejs_version: "5.0"
   GithubEmail: johnny_reilly@hotmail.com
   GithubUsername: johnnyreilly
   GithubPersonalAccessToken:
     secure: T4M/N+e/baksVoeWoYKPWIpfahOsiSFw/+Zc81VuThZmWEqmrRtgEHUyin0vCWhl
+
+install:
+  - ps: Install-Product node $env:nodejs_version
 
 branches:
   only:
@@ -16,12 +19,9 @@ before_build:
 - cmd: >-
     npm install
 
-    npm run bower-install
-
-
 build_script:
 - cmd: >-
-    npm run build-release
+    npm run build
 
 before_test:
 - ps: >-

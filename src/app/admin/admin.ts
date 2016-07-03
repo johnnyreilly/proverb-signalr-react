@@ -1,4 +1,6 @@
-﻿interface adminVm {
+﻿import { common } from "../common/common";
+
+interface adminVm {
     title: string;
 }
 

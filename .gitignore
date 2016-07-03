@@ -96,6 +96,9 @@ bower_components
 # Typings
 typings
 
+# Build results
+dist
+
 # Karma test results
 test-results
 

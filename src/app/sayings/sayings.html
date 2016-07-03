@@ -1,4 +1,4 @@
-﻿<section class="mainbar" data-ng-controller="sayings as vm">
+﻿<section class="mainbar">
     <section class="matter">
         <div class="container-fluid">
 
@@ -25,7 +25,7 @@
 
                     <div class="widget-content">
                         <blockquote data-ng-repeat="s in vm.sayings | filter:vm.bySelectedSage">
-                            <p><a ng-href="#/sayings/edit/{{s.id}}">{{s.text}}</a></p>
+                            <p><a ui-sref="sayingsEdit({id: s.id})">{{s.text}}</a></p>
                             <footer>{{s.sage.name}}</footer>
                         </blockquote>
                     </div>
