@@ -5,9 +5,9 @@ git config --global user.email $email
 git config --global user.name $username
 git config --global push.default matching
 
-Write-Host "- Copy contents of build folder into a static-site folder...."
+Write-Host "- Copy contents of dist folder into a static-site folder...."
 md ..\static-site
-copy-item -path .\build\* -Destination ..\static-site -Recurse
+copy-item -path .\dist\* -Destination ..\static-site -Recurse
 
 Write-Host "- Clone gh-pages branch...."
 cd "$($buildFolder)\..\"
