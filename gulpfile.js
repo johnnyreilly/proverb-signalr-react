@@ -81,7 +81,7 @@ gulp.task('watch', ['delete-dist-contents'], function (done) {
     gulp.watch(eslintSrcs, ['eslint']);
     gulp.watch(tslintSrcs, ['tslint']);
     staticFiles.watch();
-    //tests.watch();
+    tests.watch();
 });
 
 gulp.task('serve', ['watch'], function() {

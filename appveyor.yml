@@ -25,6 +25,10 @@ before_build:
 
     typings install
 
+    cd ../test
+
+    typings install
+
     cd ../
 
 build_script:
@@ -32,10 +36,10 @@ build_script:
     npm run build
 
 # before_test:
-# - ps: >-
-#     npm run test
-# 
-#     ../registerTestResults.ps1
+- ps: >-
+    npm run test
+
+    ../registerTestResults.ps1
 
 deploy_script:
 - ps: ./pushStatic.ps1 $env:APPVEYOR_BUILD_FOLDER $env:GithubEmail $env:GithubUsername $env:GithubPersonalAccessToken $env:APPVEYOR_REPO_NAME
