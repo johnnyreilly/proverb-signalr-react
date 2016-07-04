@@ -114,57 +114,51 @@ describe("Controllers", () => {
         });
 
         describe("save", () => {
+            function getSaveController() {
+                const { $controller, $location, $scope, $stateParams, common, datacontext,
+                    getById_deferred, $rootScope, $q } = getInjectable();
+                const sage_stub = getSageStub();
 
-            let sage_stub: Sage;
-            let save_deferred: ng.IDeferred<any>;
-            let controller: SageEditController;
-            let common: Common;
-            let datacontext: DataContext;
-            let $rootScope: ng.IRootScopeService;
-            let $location: ng.ILocationService;
-
-            beforeEach(() => {
-                const { $controller, $location: $l, $scope, $stateParams, common: c, datacontext: dc,
-                    getById_deferred, $rootScope: $rc, $q } = getInjectable();
-                $location = $l;
-                common = c;
-                datacontext = dc;
-                $rootScope = $rc;
-                sage_stub = getSageStub();
-
-                save_deferred = $q.defer();
+                const save_deferred = $q.defer();
 
                 spyOn(datacontext.sage, "save").and.returnValue(save_deferred.promise);
                 spyOn(common, "waiter").and.callThrough();
                 spyOn($location, "path");
 
-                controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
+                const controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
                 controller.sage = sage_stub;
-            });
+
+                return { controller, datacontext, sage_stub, save_deferred, common, $rootScope, $location };
+            }
 
             it("_isSavingOrRemoving should be set true", () => {
+                const { controller } = getSaveController();
                 expect(controller._isSavingOrRemoving).toBe(false);
                 controller.save();
                 expect(controller._isSavingOrRemoving).toBe(true);
             });
 
             it("serverErrors should be wiped", () => {
+                const { controller } = getSaveController();
                 controller.errors = { "errors": "aplenty" };
                 controller.save();
                 expect(controller.errors).toEqual({});
             });
 
             it("datacontext.sage.save should be called", () => {
+                const { controller, datacontext, sage_stub } = getSaveController();
                 controller.save();
                 expect(datacontext.sage.save).toHaveBeenCalledWith(sage_stub);
             });
 
             it("common.waiter should be called", () => {
+                const { controller, sage_stub, save_deferred, common } = getSaveController();
                 controller.save();
                 expect(common.waiter).toHaveBeenCalledWith(save_deferred.promise, "sageEdit", "Saving " + sage_stub.name);
             });
 
             it("should set $location.path to edit URL with the sage id", () => {
+                const { controller, save_deferred, $rootScope, $location, sage_stub } = getSaveController();
                 controller.save();
 
                 save_deferred.resolve();
@@ -175,6 +169,7 @@ describe("Controllers", () => {
             });
 
             it("should log failure to save", () => {
+                const { controller, save_deferred, $rootScope, sage_stub } = getSaveController();
                 let reject = {};
 
                 controller.save();
@@ -186,7 +181,7 @@ describe("Controllers", () => {
             });
 
             it("should log failure to save by field name", () => {
-
+                const { controller, save_deferred, $rootScope } = getSaveController();
                 controller.$scope.form = <ng.IFormController>{};
                 let reject = {
                     errors: {

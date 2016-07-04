@@ -1,156 +1,197 @@
-describe("Proverb.Web -> app-> controllers ->", function () {
+import { initialiseApp } from "../../../src/app/app";
+import { Common } from "../../../src/app/common/common";
+import { sayingsControllerName, SayingsController } from "../../../src/app/sayings/sayingsController";
+import { DataContext } from "../../../src/app/services/datacontext";
+import { Sage } from "../../../src/app/services/repository.sage";
+import { Saying } from "../../../src/app/services/repository.saying";
+import { getStubConfig } from "../mocksAndStubs";
 
-    beforeEach(function () {
+const appName = initialiseApp(getStubConfig());
 
-        module("app");
+function getInjectable() {
+    angular.mock.module(appName);
+
+    let $controller: ng.IControllerService;
+    let $rootScope: ng.IRootScopeService;
+    let $q: ng.IQService;
+    let sage_getAll_deferred: ng.IDeferred<Sage[]>;
+    let saying_getAll_deferred: ng.IDeferred<Saying[]>;
+    let $location: ng.ILocationService;
+    let common: Common;
+    let datacontext: DataContext; // controller dependencies
+    let sayingsController: SayingsController; // the controller
+
+    angular.mock.inject((
+        _$controller_: ng.IControllerService,
+        _$location_: ng.ILocationService,
+        _$rootScope_: ng.IRootScopeService,
+        _$q_: ng.IQService,
+        _common_: Common,
+        _datacontext_: DataContext
+    ) => {
+        $controller = _$controller_;
+        $rootScope = _$rootScope_;
+        $q = _$q_;
+
+        $location = _$location_;
+        common = _common_;
+        datacontext = _datacontext_;
+
+        sage_getAll_deferred = $q.defer();
+        saying_getAll_deferred = $q.defer();
+
+        spyOn(datacontext.sage, "getAll").and.returnValue(sage_getAll_deferred.promise);
+        spyOn(datacontext.saying, "getAll").and.returnValue(saying_getAll_deferred.promise);
+        spyOn(common, "activateController").and.callThrough();
+        spyOn(common.logger, "getLoggers").and.returnValue({
+            info: jasmine.createSpy("logInfo")
+        });
     });
 
-    describe("sayings ->", function () {
+    return { $controller, $location, common, datacontext,
+        sage_getAll_deferred, saying_getAll_deferred, $rootScope };
+}
 
-        let $location: ng.ILocationService,
-            $rootScope: ng.IRootScopeService,
-            $q: ng.IQService,
-            common: common,
-            datacontext: datacontext,
-            sage_getAll_deferred: ng.IDeferred<sage[]>,
-            saying_getAll_deferred: ng.IDeferred<saying[]>,
-            sayingsController: controllers.Sayings;
+function getController($controller: ng.IControllerService, dependencies: {}) {
+    return $controller(sayingsControllerName, dependencies) as SayingsController;
+}
 
-        let stubSayings: saying[], stubSages: sage[];
+function getActivatedController() {
+    const { $controller, $location, common, datacontext } = getInjectable();
+    return getController($controller, { $location, common, datacontext });
+}
 
-        function setupStubs() {
-            stubSages = [{ id: 1, name: "John", username: "", email: "", dateOfBirth: undefined }];
-            stubSayings = [{ sageId: 1, id: 2, text: "Pithy pithy pithy" }];
+function getSagesStub() {
+    return [{ id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null } as Sage];
+}
 
-            sage_getAll_deferred.resolve(stubSages);
-            saying_getAll_deferred.resolve(stubSayings);
-        }
+function getSayingsStub() {
+    return [{ sageId: 1, id: 2, text: "Pithy pithy pithy" } as Saying];
+}
 
-        beforeEach(inject(function (
-                _$controller_: ng.IControllerService,
-                _$location_: ng.ILocationService,
-                _$rootScope_: ng.IRootScopeService,
-                _$q_: ng.IQService,
-                _common_: common,
-                _datacontext_: datacontext) {
+describe("Controllers", () => {
+    describe("Sayings", () => {
+        describe("on creation", () => {
+            it("controller should have a title of 'Sayings'", () =>
+                expect(getActivatedController().title).toBe("Sayings")
+            );
 
-            $location = _$location_;
-            $rootScope = _$rootScope_;
-            $q = _$q_;
-            common = _common_;
-            datacontext = _datacontext_;
+            it("controller should have no sages", () =>
+                expect(getActivatedController().sages.length).toBe(0)
+            );
 
-            sage_getAll_deferred = $q.defer();
-            saying_getAll_deferred = $q.defer();
+            it("controller should have no sayings", () =>
+                expect(getActivatedController().sayings.length).toBe(0)
+            );
 
-            spyOn(datacontext.sage, "getAll").and.returnValue(sage_getAll_deferred.promise);
-            spyOn(datacontext.saying, "getAll").and.returnValue(saying_getAll_deferred.promise);
-            spyOn(common, "activateController").and.callThrough();
-            spyOn(common.logger, "getLoggers").and.returnValue({
-                info: jasmine.createSpy("logInfo")
-            });
+            it("controller should have no selectedSage", () =>
+                expect(getActivatedController().selectedSage).toBeUndefined()
+            );
 
-            sayingsController = _$controller_("sayings", {
-                $location: $location,
-                common: common,
-                datacontext: datacontext
-            });
-        }));
-
-        describe("on creation ->", function () {
-
-            it("controller should have a title of 'Sayings'", function () {
-
-                expect(sayingsController.title).toBe("Sayings");
-            });
-
-            it("controller should have no sages", function () {
-
-                expect(sayingsController.sages.length).toBe(0);
-            });
-
-            it("controller should have no sayings", function () {
-
-                expect(sayingsController.sayings.length).toBe(0);
-            });
-
-            it("controller should have no selectedSage", function () {
-
-                expect(sayingsController.selectedSage).toBeUndefined();
-            });
-
-            it("datacontext.sage.getAll should be called", function () {
+            it("datacontext.sage.getAll should be called", () => {
+                const { $controller, $location, common, datacontext } = getInjectable();
+                const controller = getController($controller, { $location, common, datacontext });
 
                 expect(datacontext.sage.getAll).toHaveBeenCalled();
             });
 
-            it("datacontext.saying.getAll should be called", function () {
+            it("datacontext.saying.getAll should be called", () => {
+                const { $controller, $location, common, datacontext } = getInjectable();
+                const controller = getController($controller, { $location, common, datacontext });
 
                 expect(datacontext.saying.getAll).toHaveBeenCalled();
             });
         });
 
-        describe("activateController ->", function () {
+        describe("activateController", () => {
+            it("should set sayings to be the resolved promise values", () => {
+                const { $controller, $location, common, datacontext, $rootScope, sage_getAll_deferred, saying_getAll_deferred  } = getInjectable();
+                const stubSayings = getSayingsStub();
+                sage_getAll_deferred.resolve(getSagesStub());
+                saying_getAll_deferred.resolve(stubSayings);
 
-            beforeEach(function () {
-                setupStubs();
-            });
+                const controller = getController($controller, { $location, common, datacontext });
 
-            it("should set sayings to be the resolved promise values", function () {
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sayingsController.sayings).toBe(stubSayings);
+                expect(controller.sayings).toBe(stubSayings);
             });
 
-            it("should set sages to be the resolved promise values", function () {
+            it("should set sages to be the resolved promise values", () => {
+                const { $controller, $location, common, datacontext, $rootScope, sage_getAll_deferred, saying_getAll_deferred  } = getInjectable();
+                const stubSages = getSagesStub();
+                sage_getAll_deferred.resolve(stubSages);
+                saying_getAll_deferred.resolve(getSayingsStub());
+
+                const controller = getController($controller, { $location, common, datacontext });
+
                 $rootScope.$digest();
 
-                expect(sayingsController.sages).toBe(stubSages);
+                expect(controller.sages).toBe(stubSages);
             });
 
-            it("should have a selectedSage", function () {
+            it("should have a selectedSage", () => {
+                const { $controller, $location, common, datacontext, $rootScope, sage_getAll_deferred, saying_getAll_deferred  } = getInjectable();
+                const stubSages = getSagesStub();
+                sage_getAll_deferred.resolve(stubSages);
+                saying_getAll_deferred.resolve(getSayingsStub());
+
+                const controller = getController($controller, { $location, common, datacontext });
+
                 spyOn($location, "search").and.returnValue({ sageId: 1 });
 
                 $rootScope.$digest();
 
-                expect(sayingsController.selectedSage).toBe(stubSages[0]);
+                expect(controller.selectedSage).toBe(stubSages[0]);
             });
 
-            it("should not have a selectedSage", function () {
+            it("should not have a selectedSage", () => {
+                const { $controller, $location, common, datacontext, $rootScope, sage_getAll_deferred, saying_getAll_deferred  } = getInjectable();
+                sage_getAll_deferred.resolve(getSagesStub());
+                saying_getAll_deferred.resolve(getSayingsStub());
+
+                const controller = getController($controller, { $location, common, datacontext });
+
                 spyOn($location, "search").and.returnValue({});
 
                 $rootScope.$digest();
 
-                expect(sayingsController.selectedSage).toBeUndefined();
+                expect(controller.selectedSage).toBeUndefined();
             });
 
-            it("should log 'Activated Sayings View'", function () {
+            it("should log 'Activated Sayings View'", () => {
+                const { $controller, $location, common, datacontext, $rootScope, sage_getAll_deferred, saying_getAll_deferred  } = getInjectable();
+                sage_getAll_deferred.resolve(getSagesStub());
+                saying_getAll_deferred.resolve(getSayingsStub());
+
+                const controller = getController($controller, { $location, common, datacontext });
                 $rootScope.$digest();
 
-                expect(sayingsController.log.info).toHaveBeenCalledWith("Activated Sayings View");
+                expect(controller.log.info).toHaveBeenCalledWith("Activated Sayings View");
             });
         });
 
-        describe("gotoAdd ->", function () {
-
-            it("should set $location.path to add URL", function () {
-
+        describe("gotoAdd ->", () => {
+            it("should set $location.path to add URL", () => {
+                const { $controller, $location, common, datacontext, $rootScope } = getInjectable();
+                const controller = getController($controller, { $location, common, datacontext });
                 spyOn($location, "path");
 
-                sayingsController.gotoAdd();
+                controller.gotoAdd();
 
                 expect($location.path).toHaveBeenCalledWith("/sayings/edit/add");
             });
         });
 
-        describe("selectedSageChange ->", function () {
-
-            it("should set $location.search sageId to the selectedSage id", function () {
-
-                sayingsController.selectedSage = stubSages[0];
+        describe("selectedSageChange ->", () => {
+            it("should set $location.search sageId to the selectedSage id", () => {
+                const { $controller, $location, common, datacontext, $rootScope } = getInjectable();
+                const controller = getController($controller, { $location, common, datacontext });
+                const stubSages = getSagesStub();
+                controller.selectedSage = stubSages[0];
                 spyOn($location, "search");
 
-                sayingsController.selectedSageChange();
+                controller.selectedSageChange();
 
                 expect($location.search).toHaveBeenCalledWith("sageId", 1);
             });
