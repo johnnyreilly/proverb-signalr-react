@@ -19,7 +19,6 @@ export function commonServiceFactory(
     $rootScope: ng.IRootScopeService,
     logger: LoggerService,
     config: Config) {
-        console.log("config", config)
 
     const service: CommonService = {
         // common angular dependencies
