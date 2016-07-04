@@ -1,34 +1,36 @@
 # Proverb Angular
 
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/johnnyreilly/proverb-angular?retina=true)](https://ci.appveyor.com/project/JohnReilly/proverb-angular)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/johnnyreilly/proverb-angular?svg=true)](https://ci.appveyor.com/project/JohnReilly/proverb-angular) [![TypeScript definitions on DefinitelyTyped](http://definitelytyped.org/badges/standard-flat.svg)](http://definitelytyped.org)
 
-[![TypeScript definitions on DefinitelyTyped](http://definitelytyped.org/badges/standard-flat.svg)](http://definitelytyped.org)
+Proverb is a simple app that stores the wise sayings of sages.  Most notably those of "Socrates" Aruldas.
 
-Proverb is a simple app that stores the wise sayings of sages.  This is a collection of variations upon a the proverb theme.  Different versions of "Proverb" built using different technologies and techniques for kicks and giggles.  It's a playground for me.  
+This repository is built using the following technologies:
 
-This repository is using the following technologies:
+- TypeScript using ES2015
+- AngularJS 1.5
+- Webpack (with ts-loader for TypeScript compilation and babel-loader for transpilation)
+- Karma for testing
 
-- TypeScript
-- AngularJS 1.3
-
-This is the AngularJS front end of Proverb.
+This is the Angular 1.x front end of Proverb.
 
 ## Getting Started
 
-You need to install [node and npm](http://nodejs.org/).
+You need to install [node and npm](http://nodejs.org/).  You also need to install [Typings](https://github.com/typings/typings).  Install your node dependencies with `npm install`.  To install your typing dependencies you need to run `typings install` in both the `src` and `test` folders.
 
-To build for debug:
+To develop locally enter
 
 ```
-npm run build-debug
+npm run serve
 ```
+
+and then browse to http://localhost:7777/.  As you save your files will be compiled / linted and your tests run.
 
 To build for release:
 
 ```
-npm run build-release
+npm run build
 ```
 
 ## Licence
 
-Copyright © 2014 [John Reilly](twitter.com/johnny_reilly). This project is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).
+Copyright © 2014- [John Reilly](twitter.com/johnny_reilly). This project is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).
