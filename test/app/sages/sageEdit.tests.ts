@@ -1,123 +1,136 @@
-﻿describe("Proverb.Web -> app-> controllers ->", function () {
+﻿import { initialiseApp } from "../../../src/app/app";
+import { Common } from "../../../src/app/common/common";
+import { SageEditRouteParams, sageEditControllerName, SageEditController } from "../../../src/app/sages/sageEditController";
+import { DataContext } from "../../../src/app/services/datacontext";
+import { Sage } from "../../../src/app/services/repository.sage";
+import { getStubConfig } from "../mocksAndStubs";
 
-    beforeEach(function () {
+const appName = initialiseApp(getStubConfig());
 
-        module("app");
+function getInjectable() {
+    angular.mock.module(appName);
+
+    let $controller: ng.IControllerService;
+    let $rootScope: ng.IRootScopeService;
+    let $scope: ng.IScope;
+    let $q: ng.IQService;
+    let getById_deferred: ng.IDeferred<Sage>; // deferred used for promises
+    let $location: ng.ILocationService;
+    let $stateParams: SageEditRouteParams;
+    let common: Common;
+    let datacontext: DataContext; // controller dependencies
+    let sageEditController: SageEditController; // the controller
+
+    angular.mock.inject((
+        _$controller_: ng.IControllerService,
+        _$location_: ng.ILocationService,
+        _$rootScope_: ng.IRootScopeService,
+        _$q_: ng.IQService,
+        _common_: Common,
+        _datacontext_: DataContext
+    ) => {
+        $controller = _$controller_;
+        $rootScope = _$rootScope_;
+        $scope = $rootScope.$new();
+        $q = _$q_;
+
+        $location = _$location_;
+        common = _common_;
+        datacontext = _datacontext_;
+
+        $stateParams = { id: "10" };
+        getById_deferred = $q.defer();
+
+        spyOn(datacontext.sage, "getById").and.returnValue(getById_deferred.promise);
+        spyOn(common, "activateController").and.callThrough();
+        spyOn(common.logger, "getLoggers").and.returnValue({
+            error: jasmine.createSpy("logError"),
+            info: jasmine.createSpy("logInfo"),
+            success: jasmine.createSpy("logSuccess")
+        });
     });
 
-    describe("sageEdit ->", function () {
+    return { $controller, $scope, $location, $stateParams, common, datacontext,
+        getById_deferred, $rootScope, $q };
+}
 
-        let $rootScope: ng.IRootScopeService,
-            $q: ng.IQService,
-            getById_deferred: ng.IDeferred<sage>, // deferred used for promises
-            $location: ng.ILocationService,
-            $scope: ng.IScope,
-            $routeParams_stub: controllers.sageEditRouteParams,
-            common: common,
-            datacontext: datacontext, // controller dependencies
-            $controller: ng.IControllerService,
-            sageEditController: controllers.SageEdit; // the controller
+function getController($controller: ng.IControllerService, dependencies: {}) {
+    return $controller(sageEditControllerName, dependencies) as SageEditController;
+}
 
-        beforeEach(inject(function (
-                _$controller_: ng.IControllerService,
-                _$location_: ng.ILocationService,
-                _$rootScope_: ng.IRootScopeService,
-                _$q_: ng.IQService,
-                _common_: common,
-                _datacontext_: datacontext) {
+function getActivatedController() {
+    const { $controller, $location, $scope, $stateParams, common, datacontext } = getInjectable();
+    return getController($controller, { $location, $scope, $stateParams, common, datacontext });
+}
 
-            $rootScope = _$rootScope_;
-            $q = _$q_;
+function getSageStub() {
+    return { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null } as Sage;
+}
 
-            $controller = _$controller_;
-            $location = _$location_;
-            $scope = $rootScope.$new();
-            common = _common_;
-            datacontext = _datacontext_;
+describe("Controllers", () => {
+    describe("SageEditController", () => {
+        describe("on creation ->", () => {
+            it("controller should have a title of 'Sage Edit'", () =>
+                expect(getActivatedController().title).toBe("Sage Edit")
+            );
 
-            $routeParams_stub = { id: "10" };
-            getById_deferred = $q.defer();
+            it("controller should have no sage", () =>
+                expect(getActivatedController().sage).toBeUndefined()
+            );
 
-            spyOn(datacontext.sage, "getById").and.returnValue(getById_deferred.promise);
-            spyOn(common, "activateController").and.callThrough();
-            spyOn(common.logger, "getLoggers").and.returnValue({
-                error: jasmine.createSpy("logError"),
-                info: jasmine.createSpy("logInfo"),
-                success: jasmine.createSpy("logSuccess")
-            });
-        }));
-
-        /**
-         * Construct a new controller
-         */
-        function makeController() {
-            return $controller("sageEdit", {
-                $location: $location,
-                $scope: $scope,
-                $routeParams: $routeParams_stub,
-                common: common,
-                datacontext: datacontext
-            });
-        }
-
-        describe("on creation ->", function () {
-
-            beforeEach(function () {
-
-                sageEditController = makeController();
-            });
-
-            it("controller should have a title of 'Sage Edit'", function () {
-
-                expect(sageEditController.title).toBe("Sage Edit");
-            });
-
-            it("controller should have no sage", function () {
-
-                expect(sageEditController.sage).toBeUndefined();
-            });
-
-            it("datacontext.sage.getById should be called", function () {
+            it("datacontext.sage.getById should be called", () => {
+                const { $controller, $location, $scope, $stateParams, common, datacontext } = getInjectable();
+                const controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
 
                 expect(datacontext.sage.getById).toHaveBeenCalledWith(10);
             });
         });
 
-        describe("activateController ->", function () {
-
-            let sage_stub: sage;
-            beforeEach(function () {
-
-                sage_stub = { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null };
-
-                sageEditController = makeController();
-            });
-
-            it("should set sage to be the resolved promise values", function () {
+        describe("activateController", () => {
+            it("should set sage to be the resolved promise values", () => {
+                const { $controller, $location, $scope, $stateParams, common, datacontext,
+                    getById_deferred, $rootScope } = getInjectable();
+                const controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
+                const sage_stub = getSageStub();
 
                 getById_deferred.resolve(sage_stub);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sageEditController.sage).toBe(sage_stub);
+                expect(controller.sage).toBe(sage_stub);
             });
 
-            it("should log 'Activated Sage Edit View' and set title with name", function () {
+            it("should log 'Activated Sage Edit View' and set title with name", () => {
+                const { $controller, $location, $scope, $stateParams, common, datacontext,
+                    getById_deferred, $rootScope } = getInjectable();
+                const controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
+                const sage_stub = getSageStub();
 
                 getById_deferred.resolve(sage_stub);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sageEditController.log.info).toHaveBeenCalledWith("Activated Sage Edit View");
-                expect(sageEditController.title).toBe("Sage Edit: " + sage_stub.name);
+                expect(controller.log.info).toHaveBeenCalledWith("Activated Sage Edit View");
+                expect(controller.title).toBe("Sage Edit: " + sage_stub.name);
             });
         });
 
-        describe("save ->", function () {
+        describe("save", () => {
 
-            let sage_stub: sage,
-                save_deferred: ng.IDeferred<any>;
+            let sage_stub: Sage;
+            let save_deferred: ng.IDeferred<any>;
+            let controller: SageEditController;
+            let common: Common;
+            let datacontext: DataContext;
+            let $rootScope: ng.IRootScopeService;
+            let $location: ng.ILocationService;
 
-            beforeEach(function () {
-                sage_stub = { id: 20, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null };
+            beforeEach(() => {
+                const { $controller, $location: $l, $scope, $stateParams, common: c, datacontext: dc,
+                    getById_deferred, $rootScope: $rc, $q } = getInjectable();
+                $location = $l;
+                common = c;
+                datacontext = dc;
+                $rootScope = $rc;
+                sage_stub = getSageStub();
 
                 save_deferred = $q.defer();
 
@@ -125,75 +138,69 @@
                 spyOn(common, "waiter").and.callThrough();
                 spyOn($location, "path");
 
-                sageEditController = makeController();
-                sageEditController.sage = sage_stub;
+                controller = getController($controller, { $location, $scope, $stateParams, common, datacontext });
+                controller.sage = sage_stub;
             });
 
-            it("_isSavingOrRemoving should be set true", function () {
-
-                expect(sageEditController._isSavingOrRemoving).toBe(false);
-                sageEditController.save();
-                expect(sageEditController._isSavingOrRemoving).toBe(true);
+            it("_isSavingOrRemoving should be set true", () => {
+                expect(controller._isSavingOrRemoving).toBe(false);
+                controller.save();
+                expect(controller._isSavingOrRemoving).toBe(true);
             });
 
-            it("serverErrors should be wiped", function () {
-
-                sageEditController.errors = { "errors": "aplenty" };
-                sageEditController.save();
-                expect(sageEditController.errors).toEqual({});
+            it("serverErrors should be wiped", () => {
+                controller.errors = { "errors": "aplenty" };
+                controller.save();
+                expect(controller.errors).toEqual({});
             });
 
-            it("datacontext.sage.save should be called", function () {
-
-                sageEditController.save();
+            it("datacontext.sage.save should be called", () => {
+                controller.save();
                 expect(datacontext.sage.save).toHaveBeenCalledWith(sage_stub);
             });
 
-            it("common.waiter should be called", function () {
-
-                sageEditController.save();
+            it("common.waiter should be called", () => {
+                controller.save();
                 expect(common.waiter).toHaveBeenCalledWith(save_deferred.promise, "sageEdit", "Saving " + sage_stub.name);
             });
 
-            it("should set $location.path to edit URL with the sage id", function () {
-
-                sageEditController.save();
+            it("should set $location.path to edit URL with the sage id", () => {
+                controller.save();
 
                 save_deferred.resolve();
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sageEditController.log.success).toHaveBeenCalledWith("Saved " + sage_stub.name);
+                expect(controller.log.success).toHaveBeenCalledWith("Saved " + sage_stub.name);
                 expect($location.path).toHaveBeenCalledWith("/sages/detail/" + sage_stub.id);
             });
 
-            it("should log failure to save", function () {
-
+            it("should log failure to save", () => {
                 let reject = {};
 
-                sageEditController.save();
+                controller.save();
 
                 save_deferred.reject(reject);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sageEditController.log.error).toHaveBeenCalledWith("Failed to save " + sage_stub.name, reject);
+                expect(controller.log.error).toHaveBeenCalledWith("Failed to save " + sage_stub.name, reject);
             });
 
-            it("should log failure to save by field name", function () {
+            it("should log failure to save by field name", () => {
 
-                sageEditController.$scope.form = <ng.IFormController>{};
+                controller.$scope.form = <ng.IFormController>{};
                 let reject = {
                     errors: {
                         "sage.userName": ["I'm a validation", "Me too"]
                     }
                 };
 
-                sageEditController.save();
+                controller.save();
 
                 save_deferred.reject(reject);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(sageEditController.log.error).toHaveBeenCalledWith(reject.errors["sage.userName"]);
-                expect(sageEditController.errors).toEqual({
+                expect(controller.log.error).toHaveBeenCalledWith(reject.errors["sage.userName"]);
+                expect(controller.errors).toEqual({
                     "sage.userName": "I'm a validation,Me too"
                 });
             });

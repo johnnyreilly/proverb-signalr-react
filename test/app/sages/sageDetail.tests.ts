@@ -60,6 +60,10 @@ function getActivatedController() {
     return getController($controller, { $location, $stateParams, common, datacontext });
 }
 
+function getSageStub() {
+    return { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null } as Sage;
+}
+
 describe("Controllers", () => {
     describe("on creation ->", () => {
 
@@ -79,17 +83,12 @@ describe("Controllers", () => {
         });
     });
 
-    describe("activateController ->", function () {
-
-        let sage_stub: Sage;
-        beforeEach(() => {
-            sage_stub = { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null };
-        });
-
+    describe("activateController", function () {
         it("should set sage to be the resolved promise values", () => {
             const { $controller, $location, $stateParams, common, datacontext,
                 getById_deferred, $rootScope } = getInjectable();
             const controller = getController($controller, { $location, $stateParams, common, datacontext });
+            const sage_stub = getSageStub();
 
             getById_deferred.resolve(sage_stub);
             $rootScope.$digest(); // So Angular processes the resolved promise
@@ -101,6 +100,7 @@ describe("Controllers", () => {
             const { $controller, $location, $stateParams, common, datacontext,
                 getById_deferred, $rootScope } = getInjectable();
             const controller = getController($controller, { $location, $stateParams, common, datacontext });
+            const sage_stub = getSageStub();
 
             getById_deferred.resolve(sage_stub);
             $rootScope.$digest(); // So Angular processes the resolved promise
@@ -110,16 +110,11 @@ describe("Controllers", () => {
         });
     });
 
-    describe("gotoEdit ->", () => {
-
-        let sage_stub: Sage;
-        beforeEach(() => {
-            sage_stub = { id: 1, name: "John", username: "john", email: "johnny_reilly@hotmail.com", dateOfBirth: null };
-        });
-
+    describe("gotoEdit", () => {
         it("should set $location.path to edit URL with the sage id", () => {
             const { $controller, $location, $stateParams, common, datacontext } = getInjectable();
             const controller = getController($controller, { $location, $stateParams, common, datacontext });
+            const sage_stub = getSageStub();
 
             controller.sage = sage_stub;
 
