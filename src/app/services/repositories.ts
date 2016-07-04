@@ -5,7 +5,7 @@ export interface Repositories {
     getRepo: (repoName: string) => any;
 }
 
-export const repositoriesServiceFactoryName = "repositories";
+export const repositoriesName = "repositories";
 
 repositoriesServiceFactory.$inject = ["$injector"];
 export function repositoriesServiceFactory($injector: ng.auto.IInjectorService) {

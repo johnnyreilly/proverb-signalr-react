@@ -1,6 +1,6 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { Loggers } from "../common/logger";
-import { DataContext } from "../services/datacontext";
+import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
 
 export const dashboardControllerName = "dashboard";
@@ -10,7 +10,7 @@ export class DashboardController {
     log: Loggers;
     sages: Sage[];
 
-    static $inject = ["common", "datacontext"];
+    static $inject = [commonName, datacontextName];
     constructor(
         private common: Common,
         private datacontext: DataContext

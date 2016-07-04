@@ -1,5 +1,5 @@
 ﻿import { Config } from "../app";
-import { Common } from "../common/common";
+import { commonName, Common } from "../common/common";
 import { Loggers } from "../common/logger";
 
 export const aboutControllerName = "about";
@@ -9,7 +9,7 @@ export class AboutController {
     log: Loggers;
     version: string;
 
-    static $inject = ["common", "config"];
+    static $inject = [commonName, "config"];
     constructor(
         private common: Common,
         private config: Config

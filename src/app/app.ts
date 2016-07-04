@@ -27,9 +27,10 @@ export interface ConfigEvents {
     waiterSuccess: string;
 }
 
+export const configName = "config";
+
 export interface Config extends AppConfig {
     appErrorPrefix: string;
-    docTitle: string;
     events: ConfigEvents;
     imageSettings?: {
         imageBasePath: string;
@@ -61,7 +62,6 @@ function configureApp(app: ng.IModule, appConfig: AppConfig) {
         appErrorPrefix: "[Error] ", // Configure the exceptionHandler decorator
         appName: appConfig.appName,
         appRoot: appConfig.appRoot,
-        docTitle: appConfig.appName + ": ",
         events: {
             controllerActivateSuccess: "controller.activateSuccess",
             failure: "failure",
@@ -75,7 +75,7 @@ function configureApp(app: ng.IModule, appConfig: AppConfig) {
         version: appConfig.version
     };
 
-    app.value("config", config);
+    app.value(configName, config);
 
     app.config(["$logProvider", "$compileProvider", (
         $logProvider: ng.ILogProvider,
@@ -154,7 +154,7 @@ function decorateExceptionHandler(app: ng.IModule) {
             const logError = logger.getLogFn("app", "error");
             return function (exception: Error, cause: string) {
                 $delegate(exception, cause);
-                if (appErrorPrefix && exception.message.indexOf(appErrorPrefix) === 0) { return; }
+                if (appErrorPrefix && exception.message.startsWith(appErrorPrefix)) { return; }
 
                 const errorData = { exception: exception, cause: cause };
                 const msg = appErrorPrefix + exception.message;

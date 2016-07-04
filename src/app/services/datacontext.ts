@@ -1,4 +1,4 @@
-import { Repositories } from "./repositories";
+import { repositoriesName, Repositories } from "./repositories";
 import { RepositorySayingService } from "./repository.saying";
 import { RepositorySageService } from "./repository.sage";
 
@@ -8,9 +8,9 @@ export interface DataContext {
     sage: RepositorySageService;
 }
 
-export const datacontextServiceFactoryName = "datacontext";
+export const datacontextName = "datacontext";
 
-datacontextServiceFactory.$inject = ["repositories"];
+datacontextServiceFactory.$inject = [repositoriesName];
 export function datacontextServiceFactory(repositories: Repositories) {
 
     const service: DataContext = {
@@ -40,7 +40,7 @@ export function datacontextServiceFactory(repositories: Repositories) {
             Object.defineProperty(service, name, {
                 configurable: true, // will redefine this property once
                 get: function () {
-                    // The 1st time the repo is request via this property, 
+                    // The 1st time the repo is request via this property,
                     // we ask the repositories for it (which will inject it).
                     const repo = repositories.getRepo(name);
                     // Rewrite this property to always return this repo;

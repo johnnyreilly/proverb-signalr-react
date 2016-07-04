@@ -1,6 +1,6 @@
 import Moment from "moment";
 
-import { Common } from "../common/common";
+import { commonName, Common } from "../common/common";
 import { Config } from "../app";
 import { LoggerFunction } from "../common/logger";
 import { Saying } from "./repository.saying";
@@ -22,7 +22,7 @@ export class RepositorySageService {
     rootUrl: string;
     cache: Map<number, Sage>;
 
-    static $inject = ["$http", "common", "config", "moment"];
+    static $inject = ["$http", commonName, "config", "moment"];
     constructor(private $http: ng.IHttpService, private common: Common, private config: Config, private moment: typeof Moment) {
         this.log = common.logger.getLogFn(repositorySageServiceName);
         this.rootUrl = config.remoteServiceRoot + "sage";

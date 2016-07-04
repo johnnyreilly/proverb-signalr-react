@@ -1,10 +1,10 @@
-import { Common, CommonConfigProvider } from "./common";
+import { commonName, Common, CommonConfigProvider } from "./common";
 
 export const spinnerServiceName = "spinner";
 
 export class SpinnerService {
 
-    static $inject = ["common", "commonConfig"];
+    static $inject = [commonName, "commonConfig"];
     constructor(private common: Common, private commonConfigProvider: CommonConfigProvider) {
     }
 

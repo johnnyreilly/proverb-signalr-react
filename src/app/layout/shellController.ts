@@ -1,5 +1,5 @@
 ﻿import { Config } from "../app";
-import { Common } from "../common/common";
+import { commonName, Common } from "../common/common";
 import { Loggers } from "../common/logger";
 import { ControllerActivateSuccessData, FailureData, WaiterStartData } from "../common/common";
 
@@ -22,7 +22,7 @@ export class ShellController {
     urlSidebar: string;
     urlTopNav: string;
 
-    static $inject = ["$rootScope", "common", "config", "$state"];
+    static $inject = ["$rootScope", commonName, "config", "$state"];
     constructor(
         private $rootScope: ShellRootScope,
         private common: Common,

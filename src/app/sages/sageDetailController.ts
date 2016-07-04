@@ -1,6 +1,6 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { Loggers } from "../common/logger";
-import { DataContext } from "../services/datacontext";
+import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
 
 export const sageDetailControllerName = "sageDetail";
@@ -15,7 +15,7 @@ export class SageDetailController {
     sage: Sage;
     title: string;
 
-    static $inject = ["$location", "$stateParams", "common", "datacontext"];
+    static $inject = ["$location", "$stateParams", commonName, datacontextName];
     constructor(
         private $location: ng.ILocationService,
         private $stateParams: SageDetailRouteParams,

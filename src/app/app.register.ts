@@ -9,8 +9,8 @@ import { aboutControllerName, AboutController } from "./about/aboutController";
 import { shellControllerName, ShellController } from "./layout/shellController";
 import { sidebarControllerName, SidebarController } from "./layout/sidebarController";
 import { topnavControllerName, TopNavController } from "./layout/topnavController";
-import { datacontextServiceFactoryName, datacontextServiceFactory } from "./services/datacontext";
-import { repositoriesServiceFactoryName, repositoriesServiceFactory } from "./services/repositories";
+import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
+import { repositoriesName, repositoriesServiceFactory } from "./services/repositories";
 import { repositorySageServiceName, RepositorySageService } from "./services/repository.sage";
 import { repositorySayingServiceName, RepositorySayingService } from "./services/repository.saying";
 import { imgPersonName, imgPerson } from "./directives/imgPerson";
@@ -18,7 +18,6 @@ import { serverErrorName, serverError, serverErrorTooltipName, serverErrorToolti
 import { sidebarName, sidebar } from "./directives/sidebar";
 import { spinnerName, spinner } from "./directives/spinner";
 import { waiterName, waiter } from "./directives/waiter";
-import { widgetCloseName, widgetClose } from "./directives/widgetClose";
 import { widgetHeaderName, widgetHeader } from "./directives/widgetHeader";
 import { widgetMinimizeName, widgetMinimize } from "./directives/widgetMinimize";
 
@@ -48,8 +47,8 @@ function createApp() {
     .controller(sidebarControllerName, SidebarController)
     .controller(topnavControllerName, TopNavController)
 
-    .factory(datacontextServiceFactoryName, datacontextServiceFactory)
-    .factory(repositoriesServiceFactoryName, repositoriesServiceFactory)
+    .factory(datacontextName, datacontextServiceFactory)
+    .factory(repositoriesName, repositoriesServiceFactory)
     .service(repositorySageServiceName, RepositorySageService)
     .service(repositorySayingServiceName, RepositorySayingService)
 
@@ -59,7 +58,6 @@ function createApp() {
     .directive(sidebarName, sidebar)
     .directive(spinnerName, spinner)
     .directive(waiterName, waiter)
-    .directive(widgetCloseName, widgetClose)
     .directive(widgetHeaderName, widgetHeader)
     .directive(widgetMinimizeName, widgetMinimize)
     ;

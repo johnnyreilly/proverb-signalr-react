@@ -1,4 +1,4 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { Config } from "../app";
 import { LoggerFunction } from "../common/logger";
 import { Sage } from "./repository.sage";
@@ -18,7 +18,7 @@ export class RepositorySayingService {
     rootUrl: string;
     cache: Map<number, Saying>;
 
-    static $inject = ["$http", "common", "config"];
+    static $inject = ["$http", commonName, "config"];
     constructor(private $http: ng.IHttpService, private common: Common, private config: Config) {
         this.log = common.logger.getLogFn(repositorySayingServiceName);
         this.rootUrl = config.remoteServiceRoot + "saying";

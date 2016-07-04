@@ -1,7 +1,7 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { modalDialogServiceName, ModalDialogService } from "../common/modalDialog";
 import { Loggers } from "../common/logger";
-import { DataContext } from "../services/datacontext";
+import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
 import { Saying } from "../services/repository.saying";
 
@@ -25,7 +25,7 @@ export class SayingEditController {
 
     private _isSavingOrRemoving: boolean;
 
-    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, "common", "datacontext"];
+    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, commonName, datacontextName];
     constructor(
         private $location: ng.ILocationService,
         private $stateParams: SayingEditRouteParams,

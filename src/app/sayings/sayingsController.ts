@@ -1,6 +1,6 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { Loggers } from "../common/logger";
-import { DataContext } from "../services/datacontext";
+import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
 import { Saying } from "../services/repository.saying";
 
@@ -15,7 +15,7 @@ export class SayingsController {
     selectedSage: Sage;
     title: string;
 
-    static $inject = ["$location", "common", "datacontext"];
+    static $inject = ["$location", commonName, datacontextName];
     constructor(
         private $location: ng.ILocationService,
         private common: Common,

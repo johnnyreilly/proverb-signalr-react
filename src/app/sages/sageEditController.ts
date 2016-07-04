@@ -1,7 +1,7 @@
-﻿import { Common } from "../common/common";
+﻿import { commonName, Common } from "../common/common";
 import { modalDialogServiceName, ModalDialogService } from "../common/modalDialog";
 import { Loggers } from "../common/logger";
-import { DataContext } from "../services/datacontext";
+import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
 
 export const sageEditControllerName = "sageEdit";
@@ -24,12 +24,12 @@ export class SageEditController {
 
     _isSavingOrRemoving: boolean;
 
-    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, "common", "datacontext"];
+    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, commonName, datacontextName];
     constructor(
         private $location: ng.ILocationService,
         private $stateParams: SageEditRouteParams,
         public  $scope: SageEditScope,
-        private bsDialog: ModalDialogService,
+        private modalDialog: ModalDialogService,
         private common: Common,
         private datacontext: DataContext
         ) {
@@ -66,7 +66,7 @@ export class SageEditController {
 
         const sageToRemove = this.sage.name;
 
-        this.bsDialog.deleteDialog("Do you want to remove " + sageToRemove + "?")
+        this.modalDialog.deleteDialog("Do you want to remove " + sageToRemove + "?")
             .then(() => {
 
                 this._isSavingOrRemoving = true;
