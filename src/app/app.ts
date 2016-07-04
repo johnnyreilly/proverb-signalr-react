@@ -7,7 +7,6 @@ import toastr from "toastr";
 import moment from "moment";
 
 import { configName, Config, AppConfig } from "./typesAndInterfaces/config";
-import { commonConfigProviderName, CommonConfigProvider } from "./common/common";
 import { LoggerService } from "./common/logger";
 import createApp from "./app.register";
 import { routesName, getRoutes, configureRoutes, getTemplatesToCache } from "./app.routes";
@@ -56,13 +55,6 @@ function configureApp(app: ng.IModule, appConfig: AppConfig) {
     ) => {
         $logProvider.debugEnabled(config.inDebug);
         $compileProvider.debugInfoEnabled(config.inDebug);
-    }]);
-
-    // Copy across config settings to commonConfigProvider to configure the common services
-    app.config([commonConfigProviderName, function (commonConfigProvider: CommonConfigProvider) {
-
-        // Copy events across from config.events
-        commonConfigProvider.config.events = Object.assign({}, config.events);
     }]);
 }
 

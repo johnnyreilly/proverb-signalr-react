@@ -1,11 +1,12 @@
-import { commonServiceName, CommonService, CommonConfigProvider } from "./common";
+import { commonServiceName, CommonService } from "./common";
+import { configName, Config } from "../typesAndInterfaces/config";
 
 export const spinnerServiceName = "spinner";
 
 export class SpinnerService {
 
-    static $inject = [commonServiceName, "commonConfig"];
-    constructor(private common: CommonService, private commonConfigProvider: CommonConfigProvider) {
+    static $inject = [commonServiceName, configName];
+    constructor(private common: CommonService, private config: Config) {
     }
 
     spinnerHide() {
@@ -17,6 +18,6 @@ export class SpinnerService {
     }
 
     spinnerToggle(show: boolean) {
-        this.common.$broadcast(this.commonConfigProvider.config.events.spinnerToggle, { show: show });
+        this.common.$broadcast(this.config.events.spinnerToggle, { show: show });
     }
 }
