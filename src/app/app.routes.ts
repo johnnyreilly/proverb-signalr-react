@@ -14,6 +14,8 @@ export interface ConfigRoute extends ng.ui.IState {
     };
 }
 
+export const routesName = "routes";
+
 export function getRoutes(): ConfigRoute[] {
     return [{
         name: "dashboard",

@@ -1,7 +1,7 @@
-﻿import { Config } from "../app";
-import { commonName, Common } from "../common/common";
+﻿import { configName, Config } from "../typesAndInterfaces/config";
+import { commonServiceName, CommonService } from "../common/common";
 import { Loggers } from "../common/logger";
-import { ControllerActivateSuccessData, FailureData, WaiterStartData } from "../common/common";
+import { ControllerActivateSuccessData, FailureData, WaiterStartData } from "../typesAndInterfaces/eventData";
 
 export const shellControllerName = "shell";
 
@@ -22,10 +22,10 @@ export class ShellController {
     urlSidebar: string;
     urlTopNav: string;
 
-    static $inject = ["$rootScope", commonName, "config", "$state"];
+    static $inject = ["$rootScope", commonServiceName, configName, "$state"];
     constructor(
         private $rootScope: ShellRootScope,
-        private common: Common,
+        private common: CommonService,
         private config: Config,
         private $state: ng.ui.IStateService
         ) {

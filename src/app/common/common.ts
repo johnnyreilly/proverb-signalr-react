@@ -1,7 +1,18 @@
-import { ConfigEvents } from "../app";
-import { LoggerService } from "./logger";
+import { ConfigEvents } from "../typesAndInterfaces/config";
+import { ControllerActivateSuccessData, FailureData, WaiterStartData, WaiterSuccessData } from "../typesAndInterfaces/eventData";
+import { loggerServiceName, LoggerService } from "./logger";
 
-export interface Common {
+export const commonConfigProviderName = "commonConfigProvider";
+
+export interface CommonConfigProvider {
+    config: {
+        events: ConfigEvents;
+    };
+}
+
+export const commonServiceName = "common";
+
+export interface CommonService {
     $broadcast: (...args: any[]) => ng.IAngularEvent;
     $q: ng.IQService;
 
@@ -10,35 +21,7 @@ export interface Common {
     waiter: <T>(promise: ng.IPromise<T>, controllerId: string, message?: string) => ng.IPromise<T>;
 }
 
-export interface CommonConfigProvider {
-    config: {
-        events: ConfigEvents;
-    };
-}
-
-export interface ControllerActivateSuccessData {
-    controllerId: string;
-    title: string;
-}
-
-export interface FailureData {
-    controllerId: string;
-    showToast: boolean;
-    failureReason: any;
-}
-
-export interface WaiterStartData {
-    controllerId: string;
-    message: string;
-}
-
-export interface WaiterSuccessData {
-    controllerId: string;
-}
-
-export const commonName = "common";
-
-commonServiceFactory.$inject = ["$q", "$rootScope", "commonConfig", "logger"];
+commonServiceFactory.$inject = ["$q", "$rootScope", "commonConfig", loggerServiceName];
 export function commonServiceFactory(
     $q: ng.IQService,
     $rootScope: ng.IRootScopeService,
@@ -46,7 +29,7 @@ export function commonServiceFactory(
     logger: LoggerService) {
     const throttles: { [key: string]: ng.IPromise<any> } = {};
 
-    const service: Common = {
+    const service: CommonService = {
         // common angular dependencies
         $broadcast,
         $q,

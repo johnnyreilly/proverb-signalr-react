@@ -6,38 +6,11 @@ import "angular-ui-router";
 import toastr from "toastr";
 import moment from "moment";
 
-import { CommonConfigProvider } from "./common/common";
+import { configName, Config, AppConfig } from "./typesAndInterfaces/config";
+import { commonConfigProviderName, CommonConfigProvider } from "./common/common";
 import { LoggerService } from "./common/logger";
 import createApp from "./app.register";
-import { getRoutes, configureRoutes, getTemplatesToCache } from "./app.routes";
-
-interface AppConfig {
-    appName: string;
-    appRoot: string;
-    inDebug: boolean;
-    remoteServiceRoot: string;
-    version: string;
-}
-
-export interface ConfigEvents {
-    controllerActivateSuccess: string;
-    failure: string;
-    spinnerToggle: string;
-    waiterStart: string;
-    waiterSuccess: string;
-}
-
-export const configName = "config";
-
-export interface Config extends AppConfig {
-    appErrorPrefix: string;
-    events: ConfigEvents;
-    imageSettings?: {
-        imageBasePath: string;
-        unknownPersonImageSource: string;
-    };
-    urlCacheBusterSuffix: string;
-}
+import { routesName, getRoutes, configureRoutes, getTemplatesToCache } from "./app.routes";
 
 /**
  * Add 3rd party libraries to Angular app
@@ -86,7 +59,7 @@ function configureApp(app: ng.IModule, appConfig: AppConfig) {
     }]);
 
     // Copy across config settings to commonConfigProvider to configure the common services
-    app.config(["commonConfigProvider", function (commonConfigProvider: CommonConfigProvider) {
+    app.config([commonConfigProviderName, function (commonConfigProvider: CommonConfigProvider) {
 
         // Copy events across from config.events
         commonConfigProvider.config.events = Object.assign({}, config.events);
@@ -112,7 +85,7 @@ function configureHttpProvider(app: ng.IModule) {
             // For the loading of HTML templates we want the appRoot to be prefixed to the path
             // and we want a suffix to either allow caching or prevent caching
             // (depending on whether in debug mode or not)
-            if (requestConfig.method === "GET" && endsWith(requestConfig.url.toLowerCase(), ".html")) {
+            if (requestConfig.method === "GET" && requestConfig.url.toLowerCase().endsWith(".html")) {
 
                 // If this has already been placed into a primed template cache then we should leave the URL as is
                 // so that the version in templateCache is served.  If we tweak the URL then it will not be found
@@ -125,10 +98,6 @@ function configureHttpProvider(app: ng.IModule) {
             }
 
             return requestConfig;
-        }
-
-        function endsWith(str: string, suffix: string) {
-            return str.indexOf(suffix, str.length - suffix.length) !== -1;
         }
     }]);
 
@@ -165,7 +134,7 @@ function decorateExceptionHandler(app: ng.IModule) {
 }
 
 function registerRoutes(app: ng.IModule) {
-    app.constant("routes", getRoutes());
+    app.constant(routesName, getRoutes());
     app.config(configureRoutes);
 }
 

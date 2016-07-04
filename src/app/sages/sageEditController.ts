@@ -1,4 +1,4 @@
-﻿import { commonName, Common } from "../common/common";
+﻿import { commonServiceName, CommonService } from "../common/common";
 import { modalDialogServiceName, ModalDialogService } from "../common/modalDialog";
 import { Loggers } from "../common/logger";
 import { datacontextName, DataContext } from "../services/datacontext";
@@ -24,13 +24,13 @@ export class SageEditController {
 
     _isSavingOrRemoving: boolean;
 
-    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, commonName, datacontextName];
+    static $inject = ["$location", "$stateParams", "$scope", modalDialogServiceName, commonServiceName, datacontextName];
     constructor(
         private $location: ng.ILocationService,
         private $stateParams: SageEditRouteParams,
         public  $scope: SageEditScope,
         private modalDialog: ModalDialogService,
-        private common: Common,
+        private common: CommonService,
         private datacontext: DataContext
         ) {
 

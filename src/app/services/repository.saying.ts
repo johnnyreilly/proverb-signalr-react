@@ -1,5 +1,5 @@
-﻿import { commonName, Common } from "../common/common";
-import { Config } from "../app";
+﻿import { commonServiceName, CommonService } from "../common/common";
+import { configName, Config } from "../typesAndInterfaces/config";
 import { LoggerFunction } from "../common/logger";
 import { Sage } from "./repository.sage";
 
@@ -18,8 +18,8 @@ export class RepositorySayingService {
     rootUrl: string;
     cache: Map<number, Saying>;
 
-    static $inject = ["$http", commonName, "config"];
-    constructor(private $http: ng.IHttpService, private common: Common, private config: Config) {
+    static $inject = ["$http", commonServiceName, configName];
+    constructor(private $http: ng.IHttpService, private common: CommonService, private config: Config) {
         this.log = common.logger.getLogFn(repositorySayingServiceName);
         this.rootUrl = config.remoteServiceRoot + "saying";
         this.cache = new Map();

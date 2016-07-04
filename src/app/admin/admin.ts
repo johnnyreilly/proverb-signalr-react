@@ -1,4 +1,4 @@
-﻿import { commonName, Common } from "../common/common";
+﻿import { commonServiceName, CommonService } from "../common/common";
 
 interface AdminVm {
     title: string;
@@ -7,9 +7,9 @@ interface AdminVm {
 (function () {
     "use strict";
     const controllerId = "admin";
-    angular.module("app").controller(controllerId, [commonName, admin]);
+    angular.module("app").controller(controllerId, [commonServiceName, admin]);
 
-    function admin(common: Common) {
+    function admin(common: CommonService) {
         const log = common.logger.getLoggers(controllerId);
 
         const vm: AdminVm = this;

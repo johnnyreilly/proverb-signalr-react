@@ -1,4 +1,4 @@
-﻿import { commonName, Common } from "../common/common";
+﻿import { commonServiceName, CommonService } from "../common/common";
 import { Loggers } from "../common/logger";
 import { datacontextName, DataContext } from "../services/datacontext";
 import { Sage } from "../services/repository.sage";
@@ -11,9 +11,9 @@ export class SagesController {
     sages: Sage[];
     title: string;
 
-    static $inject = [commonName, datacontextName];
+    static $inject = [commonServiceName, datacontextName];
     constructor(
-        private common: Common,
+        private common: CommonService,
         private datacontext: DataContext
         ) {
 

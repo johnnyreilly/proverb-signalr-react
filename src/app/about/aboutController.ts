@@ -1,5 +1,5 @@
-﻿import { Config } from "../app";
-import { commonName, Common } from "../common/common";
+﻿import { configName, Config } from "../typesAndInterfaces/config";
+import { commonServiceName, CommonService } from "../common/common";
 import { Loggers } from "../common/logger";
 
 export const aboutControllerName = "about";
@@ -9,9 +9,9 @@ export class AboutController {
     log: Loggers;
     version: string;
 
-    static $inject = [commonName, "config"];
+    static $inject = [commonServiceName, configName];
     constructor(
-        private common: Common,
+        private common: CommonService,
         private config: Config
         ) {
 

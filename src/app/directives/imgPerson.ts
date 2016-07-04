@@ -1,8 +1,8 @@
-﻿import { Config } from "../app";
+﻿import { configName, Config } from "../typesAndInterfaces/config";
 
 export const imgPersonName = "imgPerson";
 
-imgPerson.$inject = ["config"];
+imgPerson.$inject = [configName];
 export function imgPerson(config: Config) {
     // Usage:
     // <img img-person="{{s.speaker.imageSource}}"/>

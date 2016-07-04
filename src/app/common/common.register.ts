@@ -1,10 +1,10 @@
-﻿import { commonName, commonServiceFactory, CommonConfigProvider } from "./common";
+﻿import { commonServiceName, commonServiceFactory, CommonConfigProvider } from "./common";
 import { loggerServiceName, LoggerService } from "./logger";
 import { modalDialogServiceName, ModalDialogService } from "./modalDialog";
 import { spinnerServiceName, SpinnerService } from "./spinner";
 
 /**
- * Define the common module 
+ * Define the common module
  * Contains services:
  *  - common
  *  - logger
@@ -13,7 +13,7 @@ import { spinnerServiceName, SpinnerService } from "./spinner";
 export function createCommon() {
     return angular.module("common", [])
 
-        // Must configure the common service and set its 
+        // Must configure the common service and set its
         // events via the commonConfigProvider
         .provider("commonConfig", function () {
             this.config = {
@@ -29,7 +29,7 @@ export function createCommon() {
             return this;
         })
 
-        .factory(commonName, commonServiceFactory)
+        .factory(commonServiceName, commonServiceFactory)
         .service(loggerServiceName, LoggerService)
         .service(modalDialogServiceName, ModalDialogService)
         .service(spinnerServiceName, SpinnerService)
