@@ -6,7 +6,7 @@ import { sageEditControllerName, SageEditController } from "./sages/sageEditCont
 import { sayingsControllerName, SayingsController } from "./sayings/sayingsController";
 import { sayingEditControllerName, SayingEditController } from "./sayings/sayingEditController";
 import { aboutControllerName, AboutController } from "./about/aboutController";
-import { shellControllerName, ShellController } from "./layout/shellController";
+import { shellComponentName, shellComponent } from "./layout/shellComponent";
 import { sidebarControllerName, SidebarController } from "./layout/sidebarController";
 import { topnavControllerName, TopNavController } from "./layout/topnavController";
 import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
@@ -36,6 +36,8 @@ function createApp() {
         "ui.router",
         "ui.bootstrap"      // ui-bootstrap (ex: carousel, pagination, dialog)
     ])
+    .component(shellComponentName, shellComponent)
+
     .controller(dashboardControllerName, DashboardController)
     .controller(sagesControllerName, SagesController)
     .controller(sageDetailControllerName, SageDetailController)
@@ -43,7 +45,6 @@ function createApp() {
     .controller(sayingsControllerName, SayingsController)
     .controller(sayingEditControllerName, SayingEditController)
     .controller(aboutControllerName, AboutController)
-    .controller(shellControllerName, ShellController)
     .controller(sidebarControllerName, SidebarController)
     .controller(topnavControllerName, TopNavController)
 

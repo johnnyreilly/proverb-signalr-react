@@ -3,7 +3,7 @@ import { commonServiceName, CommonService } from "../common/common";
 import { Loggers } from "../common/logger";
 import { ControllerActivateSuccessData, FailureData, WaiterStartData } from "../typesAndInterfaces/eventData";
 
-export const shellControllerName = "shell";
+export const shellComponentName = "proverbShell";
 
 interface ShellRootScope extends ng.IRootScopeService {
     title: string;
@@ -13,7 +13,7 @@ interface SpinnerToggleEvent extends ng.IAngularEvent {
     show: boolean;
 }
 
-export class ShellController {
+class ShellController {
 
     busyMessage: string;
     isBusy: boolean;
@@ -29,8 +29,12 @@ export class ShellController {
         private config: Config,
         private $state: ng.ui.IStateService
         ) {
+    }
 
-        this.log = common.logger.getLoggers(shellControllerName);
+    // Prototype methods
+
+    $onInit() {
+        this.log = this.common.logger.getLoggers(shellComponentName);
         this.busyMessage = "Please wait ...";
         this.isBusy = true;
         this.spinnerOptions = {
@@ -50,10 +54,8 @@ export class ShellController {
         this.activate();
     }
 
-    // Prototype methods
-
     activate() {
-        this.common.activateController([], shellControllerName, "Loading....")
+        this.common.activateController([], shellComponentName, "Loading....")
             .then(() => {
                 this.log.success("Proverb v" + this.config.version + " loaded!", null, true);
             });
@@ -71,7 +73,7 @@ export class ShellController {
         this.$rootScope.$on(events.controllerActivateSuccess,
             (event: ng.IAngularEvent, data: ControllerActivateSuccessData) => {
                 // Deactivate spinner as long as the controller that has been activated is not the shell
-                if (data.controllerId !== shellControllerName) {
+                if (data.controllerId !== shellComponentName) {
                     this.toggleSpinner(false);
                 }
                 this.$rootScope.title = "Proverb - " + data.title;
@@ -108,3 +110,10 @@ export class ShellController {
         this.isBusy = onOrOff;
     }
 }
+
+export const shellComponent = {
+    controllerAs: "vm",
+    controller: ShellController,
+    template: require("./shell.html")
+};
+
