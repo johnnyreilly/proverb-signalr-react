@@ -17,7 +17,7 @@ interface SayingEditScope extends ng.IScope {
 
 export class SayingEditController {
 
-    errors: Map<string, string>;;
+    errors: Map<string, string>;
     log: Loggers;
     sages: Sage[];
     saying: Saying;
