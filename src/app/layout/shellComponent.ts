@@ -19,7 +19,6 @@ class ShellController {
     isBusy: boolean;
     log: Loggers;
     spinnerOptions: SpinnerOptions;
-    urlSidebar: string;
     urlTopNav: string;
 
     static $inject = ["$rootScope", commonServiceName, configName, "$state"];
@@ -47,7 +46,6 @@ class ShellController {
             trail: 100,
             color: "#F58A00"
         };
-        this.urlSidebar = "app/layout/sidebar.html";
         this.urlTopNav = "app/layout/topnav.html";
 
         this.wireUpEventListeners();

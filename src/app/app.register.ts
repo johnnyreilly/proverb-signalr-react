@@ -7,7 +7,7 @@ import { sayingsControllerName, SayingsController } from "./sayings/sayingsContr
 import { sayingEditControllerName, SayingEditController } from "./sayings/sayingEditController";
 import { aboutControllerName, AboutController } from "./about/aboutController";
 import { shellComponentName, shellComponent } from "./layout/shellComponent";
-import { sidebarControllerName, SidebarController } from "./layout/sidebarController";
+import { sidebarComponentName, sidebarComponent } from "./layout/sidebarComponent";
 import { topnavControllerName, TopNavController } from "./layout/topnavController";
 import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
 import { repositoriesName, repositoriesServiceFactory } from "./services/repositories";
@@ -37,6 +37,7 @@ function createApp() {
         "ui.bootstrap"      // ui-bootstrap (ex: carousel, pagination, dialog)
     ])
     .component(shellComponentName, shellComponent)
+    .component(sidebarComponentName, sidebarComponent)
 
     .controller(dashboardControllerName, DashboardController)
     .controller(sagesControllerName, SagesController)
@@ -45,7 +46,6 @@ function createApp() {
     .controller(sayingsControllerName, SayingsController)
     .controller(sayingEditControllerName, SayingEditController)
     .controller(aboutControllerName, AboutController)
-    .controller(sidebarControllerName, SidebarController)
     .controller(topnavControllerName, TopNavController)
 
     .factory(datacontextName, datacontextServiceFactory)

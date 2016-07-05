@@ -1,11 +1,11 @@
 ﻿import { ConfigRoute } from "../app.routes";
 
-export const sidebarControllerName = "sidebar";
+export const sidebarComponentName = "proverbSidebar";
 
-export class SidebarController {
+class SidebarController {
 
     navRoutes: ConfigRoute[];
-    currentRoute: string;
+    currentRoute: ConfigRoute;
 
     static $inject = ["$rootScope", "routes"];
     constructor(
@@ -28,6 +28,14 @@ export class SidebarController {
     }
 
     isCurrent(route: ConfigRoute) {
-        return route.name === this.currentRoute ? "current" : "";
+        return route && this.currentRoute && route.name === this.currentRoute.name ? "current" : "";
     }
 }
+
+
+export const sidebarComponent = {
+    controllerAs: "vm",
+    controller: SidebarController,
+    template: require("./sidebar.html")
+};
+

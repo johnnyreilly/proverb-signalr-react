@@ -88,8 +88,6 @@ export function getRoutes(): ConfigRoute[] {
 
 export function getTemplatesToCache() {
     return new Map<string, string>([
-        ["app/layout/shell.html", require("./layout/shell.html")],
-        ["app/layout/sidebar.html", require("./layout/sidebar.html")],
         ["app/layout/topnav.html", require("./layout/topnav.html")]
     ]);
 }
