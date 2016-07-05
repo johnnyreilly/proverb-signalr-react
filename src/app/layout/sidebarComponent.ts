@@ -5,19 +5,16 @@ export const sidebarComponentName = "proverbSidebar";
 class SidebarController {
 
     navRoutes: ConfigRoute[];
-    currentRoute: ConfigRoute;
+    currentRoute: string;
 
-    static $inject = ["$rootScope", "routes"];
-    constructor(
-        private $rootScope: ng.IRootScopeService,
-        private routes: ConfigRoute[]) {
+    static $inject = ["routes"];
+    constructor(private routes: ConfigRoute[]) {}
+
+    $onInit() {
         this.activate();
     }
 
     activate() {
-        this.$rootScope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => {
-            this.currentRoute = toState;
-        });
         this.getNavRoutes();
     }
 
@@ -28,11 +25,14 @@ class SidebarController {
     }
 
     isCurrent(route: ConfigRoute) {
-        return route && this.currentRoute && route.name === this.currentRoute.name ? "current" : "";
+        return route && this.currentRoute && route.name === this.currentRoute ? "current" : "";
     }
 }
 
 export const sidebarComponent = {
+    bindings: {
+        currentRoute: "<"
+    },
     controllerAs: "vm",
     controller: SidebarController,
     template: require("./sidebar.html")

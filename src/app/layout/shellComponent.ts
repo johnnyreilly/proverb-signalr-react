@@ -19,7 +19,7 @@ class ShellController {
     isBusy: boolean;
     log: Loggers;
     spinnerOptions: SpinnerOptions;
-    urlTopNav: string;
+    currentRoute: string;
 
     static $inject = ["$rootScope", commonServiceName, configName, "$state"];
     constructor(
@@ -46,7 +46,6 @@ class ShellController {
             trail: 100,
             color: "#F58A00"
         };
-        this.urlTopNav = "app/layout/topnav.html";
 
         this.wireUpEventListeners();
         this.activate();
@@ -66,6 +65,10 @@ class ShellController {
         this.$rootScope.$on("$stateChangeStart", (event, toState, toParams, fromState, fromParams) => {
             this.busyMessage = "Please wait ...";
             this.toggleSpinner(true);
+        });
+
+        this.$rootScope.$on("$stateChangeSuccess", (event, toState, toParams, fromState, fromParams) => {
+            this.currentRoute = toState ? toState.name : "";
         });
 
         this.$rootScope.$on(events.controllerActivateSuccess,
