@@ -20,6 +20,7 @@ class ShellController {
     log: Loggers;
     spinnerOptions: SpinnerOptions;
     currentRoute: string;
+    topnavCollapsed: boolean;
 
     static $inject = ["$rootScope", commonServiceName, configName, "$state"];
     constructor(
@@ -46,6 +47,7 @@ class ShellController {
             trail: 100,
             color: "#F58A00"
         };
+        this.topnavCollapsed = true;
 
         this.wireUpEventListeners();
         this.activate();
@@ -109,6 +111,10 @@ class ShellController {
 
     toggleSpinner(onOrOff: boolean) {
         this.isBusy = onOrOff;
+    }
+
+    isCollapsedChanged(newIsCollapsed: boolean) {
+        this.topnavCollapsed = newIsCollapsed;
     }
 }
 

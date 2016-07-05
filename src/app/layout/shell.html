@@ -1,5 +1,5 @@
 ﻿<div>
-    <proverb-topnav></proverb-topnav>
+    <proverb-topnav is-collapsed="vm.topnavCollapsed" on-is-collapsed-changed="vm.isCollapsedChanged(newIsCollapsed)"></proverb-topnav>
 
     <section id="content" class="content">
         <waiter is-waiting="vm.isBusy" spinner-options="vm.spinnerOptions" wait-message="vm.busyMessage"></waiter>

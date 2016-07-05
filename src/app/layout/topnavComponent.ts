@@ -3,30 +3,21 @@
 class TopNavController {
 
     isCollapsed: boolean;
+    onIsCollapsedChanged: Function;
 
-    static $inject = ["$rootScope"];
-    constructor(
-        private $rootScope: ng.IRootScopeService
-        ) {
-
-        // collapse top nav menu when route change starts (only affects mobile)
-        $rootScope.$on("$stateChangeStart", (event, toState, toParams, fromState, fromParams) => this.isCollapsed = true);
-
-        this.activate();
-    }
-
-    // Prototype methods
-
-    activate() {
-        this.isCollapsed = true;
-    }
+    static $inject: any[] = [];
+    constructor() { }
 
     toggleCollapsed() {
-        return this.isCollapsed = !this.isCollapsed;
+        this.onIsCollapsedChanged({ newIsCollapsed: !this.isCollapsed });
     }
 }
 
 export const topnavComponent = {
+    bindings: {
+        isCollapsed: "<",
+        onIsCollapsedChanged: "&"
+    },
     controllerAs: "vm",
     controller: TopNavController,
     template: require("./topnav.html")
