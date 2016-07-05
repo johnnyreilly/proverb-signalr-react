@@ -17,7 +17,7 @@ interface SayingEditScope extends ng.IScope {
 
 export class SayingEditController {
 
-    errors: { [field: string]: string };
+    errors: Map<string, string>;;
     log: Loggers;
     sages: Sage[];
     saying: Saying;
@@ -35,7 +35,7 @@ export class SayingEditController {
         private datacontext: DataContext
         ) {
 
-        this.errors = {};
+        this.errors = new Map();
         this.log = common.logger.getLoggers(sayingEditControllerName);
         this.sages = [];
         this.saying = undefined;
@@ -95,7 +95,7 @@ export class SayingEditController {
 
     save() {
 
-        this.errors = {}; // Wipe server errors
+        this.errors.clear(); // Wipe server errors
         this._isSavingOrRemoving = true;
 
         // Prepare the saying to save - send the minimal payload of data across the wire
@@ -127,7 +127,7 @@ export class SayingEditController {
                             // No screen element to tie failure message to so pop a toast
                             this.log.error(errors);
                         }
-                        this.errors[field] = errors.join(",");
+                        this.errors.set(field, errors.join(","));
                     });
                 }
                 else {

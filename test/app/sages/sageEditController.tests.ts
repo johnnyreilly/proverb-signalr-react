@@ -140,9 +140,9 @@ describe("Controllers", () => {
 
             it("serverErrors should be wiped", () => {
                 const { controller } = getSaveController();
-                controller.errors = { "errors": "aplenty" };
+                controller.errors = new Map([[ "errors", "aplenty" ]]);
                 controller.save();
-                expect(controller.errors).toEqual({});
+                expect(controller.errors.entries.length).toBe(0);
             });
 
             it("datacontext.sage.save should be called", () => {
@@ -195,9 +195,9 @@ describe("Controllers", () => {
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
                 expect(controller.log.error).toHaveBeenCalledWith(reject.errors["sage.userName"]);
-                expect(controller.errors).toEqual({
-                    "sage.userName": "I'm a validation,Me too"
-                });
+                expect(controller.errors).toEqual(new Map([
+                    ["sage.userName", "I'm a validation,Me too"]
+                ]));
             });
         });
     });

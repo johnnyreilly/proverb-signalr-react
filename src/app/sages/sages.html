@@ -20,18 +20,9 @@
                          subtitle="{{vm.sages.length}}"></div>
 
                     <div class="widget-content user">
-                        <div class="padd list-flow"
-                             ng-repeat="s in vm.sages | orderBy:'name'">
-                            <a ui-sref="sagesDetail({id: s.id})">
-                                <div class="user">
-                                    <!--<img img-person="{{s.imageSource}}" class="img-polaroid stacked" />-->
-                                    <div class="text-center"><i class="fa fa-user fa-5x"></i></div>
-                                    <div class="name-stack">
-                                        <h5>{{s.name}}</h5>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                        <proverb-sage ng-repeat="s in vm.sages | orderBy:'name'"
+                                      id="s.id"
+                                      name="s.name"></proverb-sage>
                     </div>
 
                     <div class="widget-foot">

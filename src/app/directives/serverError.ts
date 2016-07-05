@@ -46,13 +46,13 @@ export function serverError() {
             // Display an error if serverError is true otherwise clear the element
             let errorHtml = "";
             if (serverError) {
-                const errorDictionary: { [field: string]: string } = scope.$eval(errorDictionaryExpression);
-                errorHtml = template.replace(/%error%/, errorDictionary[errorKey] || "Unknown error occurred...");
+                const errorDictionary: Map<string, string> = scope.$eval(errorDictionaryExpression);
+                errorHtml = template.replace(/%error%/, errorDictionary.get(errorKey) || "Unknown error occurred...");
             }
             decorator.html(errorHtml);
         }
 
-        // wipe the server error message upon keyup or change events so can revalidate with server 
+        // wipe the server error message upon keyup or change events so can revalidate with server
         element.on("keyup change", (event) => {
             scope.$apply(() => { ngModelController.$setValidity("server", true); });
         });
@@ -78,7 +78,7 @@ export function serverErrorTooltip($compile: ng.ICompileService) {
 
     function link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, ngModelController: ng.INgModelController) {
 
-        // wipe the server error message upon keyup or change events so can revalidate with server 
+        // wipe the server error message upon keyup or change events so can revalidate with server
         element.on("keyup change", (event) => {
             scope.$apply(() => { ngModelController.$setValidity("server", true); });
         });

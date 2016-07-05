@@ -1,5 +1,6 @@
 ﻿import { createCommon } from "./common/common.register";
 import { dashboardControllerName, DashboardController } from "./dashboard/dashboardController";
+import { sageComponentName, sageComponent } from "./sages/sageComponent";
 import { sagesControllerName, SagesController } from "./sages/sagesController";
 import { sageDetailControllerName, SageDetailController } from "./sages/sageDetailController";
 import { sageEditControllerName, SageEditController } from "./sages/sageEditController";
@@ -39,6 +40,7 @@ function createApp() {
     .component(shellComponentName, shellComponent)
     .component(sidebarComponentName, sidebarComponent)
     .component(topnavComponentName, topnavComponent)
+    .component(sageComponentName, sageComponent)
 
     .controller(dashboardControllerName, DashboardController)
     .controller(sagesControllerName, SagesController)

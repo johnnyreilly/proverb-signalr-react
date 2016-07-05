@@ -17,7 +17,7 @@ export interface SageEditScope extends ng.IScope {
 export class SageEditController {
 
     dateOfBirthDatePickerIsOpen: boolean;
-    errors: { [field: string]: string };
+    errors: Map<string, string>;
     log: Loggers;
     sage: Sage;
     title: string;
@@ -35,7 +35,7 @@ export class SageEditController {
         ) {
 
         this.dateOfBirthDatePickerIsOpen = false;
-        this.errors = {};
+        this.errors = new Map();
         this.log = common.logger.getLoggers(sageEditControllerName);
         this.sage = undefined;
         this.title = "Sage Edit";
@@ -86,7 +86,7 @@ export class SageEditController {
 
     save() {
 
-        this.errors = {}; // Wipe server errors
+        this.errors.clear(); // Wipe server errors
         this._isSavingOrRemoving = true;
 
         const sageToSave = this.sage.name;
@@ -110,7 +110,7 @@ export class SageEditController {
                             // No screen element to tie failure message to so pop a toast
                             this.log.error(errors);
                         }
-                        this.errors[field] = errors.join(",");
+                        this.errors.set(field, errors.join(","));
                     });
                 }
                 else {
