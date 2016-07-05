@@ -1,6 +1,6 @@
-﻿export const topnavControllerName = "topnav";
+﻿export const topnavComponentName = "proverbTopnav";
 
-export class TopNavController {
+class TopNavController {
 
     isCollapsed: boolean;
 
@@ -25,3 +25,10 @@ export class TopNavController {
         return this.isCollapsed = !this.isCollapsed;
     }
 }
+
+export const topnavComponent = {
+    controllerAs: "vm",
+    controller: TopNavController,
+    template: require("./topnav.html")
+};
+

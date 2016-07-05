@@ -32,7 +32,6 @@ class SidebarController {
     }
 }
 
-
 export const sidebarComponent = {
     controllerAs: "vm",
     controller: SidebarController,

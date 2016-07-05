@@ -8,7 +8,7 @@ import { sayingEditControllerName, SayingEditController } from "./sayings/saying
 import { aboutControllerName, AboutController } from "./about/aboutController";
 import { shellComponentName, shellComponent } from "./layout/shellComponent";
 import { sidebarComponentName, sidebarComponent } from "./layout/sidebarComponent";
-import { topnavControllerName, TopNavController } from "./layout/topnavController";
+import { topnavComponentName, topnavComponent } from "./layout/topnavComponent";
 import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
 import { repositoriesName, repositoriesServiceFactory } from "./services/repositories";
 import { repositorySageServiceName, RepositorySageService } from "./services/repository.sage";
@@ -38,6 +38,7 @@ function createApp() {
     ])
     .component(shellComponentName, shellComponent)
     .component(sidebarComponentName, sidebarComponent)
+    .component(topnavComponentName, topnavComponent)
 
     .controller(dashboardControllerName, DashboardController)
     .controller(sagesControllerName, SagesController)
@@ -46,7 +47,6 @@ function createApp() {
     .controller(sayingsControllerName, SayingsController)
     .controller(sayingEditControllerName, SayingEditController)
     .controller(aboutControllerName, AboutController)
-    .controller(topnavControllerName, TopNavController)
 
     .factory(datacontextName, datacontextServiceFactory)
     .factory(repositoriesName, repositoriesServiceFactory)

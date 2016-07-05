@@ -87,9 +87,9 @@ export function getRoutes(): ConfigRoute[] {
 }
 
 export function getTemplatesToCache() {
-    return new Map<string, string>([
+    return new Map<string, string>(/*[
         ["app/layout/topnav.html", require("./layout/topnav.html")]
-    ]);
+    ]*/);
 }
 
 configureRoutes.$inject = ["$stateProvider", "$urlRouterProvider", "$locationProvider"];
