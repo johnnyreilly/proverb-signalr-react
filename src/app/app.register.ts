@@ -10,6 +10,7 @@ import { aboutControllerName, AboutController } from "./about/aboutController";
 import { shellComponentName, shellComponent } from "./layout/shellComponent";
 import { sidebarComponentName, sidebarComponent } from "./layout/sidebarComponent";
 import { topnavComponentName, topnavComponent } from "./layout/topnavComponent";
+import { waiterComponentName, waiterComponent } from "./layout/waiterComponent";
 import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
 import { repositoriesName, repositoriesServiceFactory } from "./services/repositories";
 import { repositorySageServiceName, RepositorySageService } from "./services/repository.sage";
@@ -18,7 +19,6 @@ import { imgPersonName, imgPerson } from "./directives/imgPerson";
 import { serverErrorName, serverError, serverErrorTooltipName, serverErrorTooltip } from "./directives/serverError";
 import { sidebarName, sidebar } from "./directives/sidebar";
 import { spinnerName, spinner } from "./directives/spinner";
-import { waiterName, waiter } from "./directives/waiter";
 import { widgetHeaderName, widgetHeader } from "./directives/widgetHeader";
 import { widgetMinimizeName, widgetMinimize } from "./directives/widgetMinimize";
 
@@ -41,6 +41,7 @@ function createApp() {
     .component(sidebarComponentName, sidebarComponent)
     .component(topnavComponentName, topnavComponent)
     .component(sageComponentName, sageComponent)
+    .component(waiterComponentName, waiterComponent)
 
     .controller(dashboardControllerName, DashboardController)
     .controller(sagesControllerName, SagesController)
@@ -60,7 +61,6 @@ function createApp() {
     .directive(serverErrorTooltipName, serverErrorTooltip)
     .directive(sidebarName, sidebar)
     .directive(spinnerName, spinner)
-    .directive(waiterName, waiter)
     .directive(widgetHeaderName, widgetHeader)
     .directive(widgetMinimizeName, widgetMinimize)
     ;
