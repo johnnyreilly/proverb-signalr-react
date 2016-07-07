@@ -8,7 +8,8 @@
     "clean": "gulp delete-dist-contents",
     "watch": "gulp watch",
     "build": "gulp build",
-    "serve": "gulp serve"
+    "serve": "gulp serve",
+    "postinstall": "cd ./src && typings install && cd ../test && typings install && cd ../"
   },
   "repository": {
     "type": "git",
@@ -62,6 +63,7 @@
     "ts-loader": "^0.8.1",
     "tslint": "^3.6.0",
     "typescript": "^1.8.0",
+    "typings": "^1.3.1",
     "webpack": "^1.12.2",
     "webpack-fail-plugin": "^1.0.4",
     "webpack-notifier": "^1.2.1",

@@ -19,18 +19,6 @@ before_build:
 - cmd: >-
     npm install
 
-    npm install -g typings
-
-    cd ./src
-
-    typings install
-
-    cd ../test
-
-    typings install
-
-    cd ../
-
 build_script:
 - cmd: >-
     npm run build

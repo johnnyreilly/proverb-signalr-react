@@ -23,7 +23,7 @@ To develop locally enter
 npm run serve
 ```
 
-and then browse to http://localhost:7777/.  As you save your files will be compiled / linted and your tests run.
+and then browse to [http://localhost:7777/](http://localhost:7777/).  As you save your files will be compiled / linted and your tests run.
 
 To build for release:
 
