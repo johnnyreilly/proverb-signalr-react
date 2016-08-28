@@ -13,6 +13,7 @@ module.exports = {
     // common dependencies bundled together packaged with CommonsChunkPlugin in gulp/webpack.js
     vendor: [
       'babel-polyfill',
+      'jquery',
       'angular',
       'angular-animate',
       'angular-ui-bootstrap',
@@ -44,7 +45,9 @@ module.exports = {
   },
   plugins: [ // Check gulp/webpack.js for build specific plugins
       new webpack.ProvidePlugin({
-          "window.jQuery": "jquery"
+          "window.jQuery": "jquery",
+          "jQuery": "jquery",
+          "$": "jquery"
       })
   ],
   resolve: {

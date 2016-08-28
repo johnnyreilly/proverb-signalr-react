@@ -39,9 +39,15 @@ module.exports = function(config) {
             loader: 'istanbul-instrumenter' } ]
       },
       plugins: [
+        new webpack.ProvidePlugin({
+           "window.jQuery": "jquery",
+           "jQuery": "jquery",
+           "$": "jquery"
+        }),
         new webpack.DefinePlugin({
             __IN_DEBUG__: false,
-            __VERSION__: JSON.stringify('tests')
+            __VERSION__: JSON.stringify('tests'),
+            __CONNECTION_URL__: JSON.stringify('http://localhost:7778/')
         })
       ],
       resolve: webpackConfig.resolve

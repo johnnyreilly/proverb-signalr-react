@@ -1,11 +1,12 @@
 # Proverb Angular
 
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/johnnyreilly/proverb-angular?svg=true)](https://ci.appveyor.com/project/JohnReilly/proverb-angular) [![TypeScript definitions on DefinitelyTyped](http://definitelytyped.org/badges/standard-flat.svg)](http://definitelytyped.org)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/johnnyreilly/proverb-signalr-client?svg=true)](https://ci.appveyor.com/project/JohnReilly/proverb-signalr-client) [![TypeScript definitions on DefinitelyTyped](http://definitelytyped.org/badges/standard-flat.svg)](http://definitelytyped.org)
 
 Proverb is a simple app that stores the wise sayings of sages.  Most notably those of "Socrates" Aruldas.
 
 This repository is built using the following technologies:
 
+- SignalR
 - TypeScript using ES2015
 - AngularJS 1.5
 - Webpack (with ts-loader for TypeScript compilation and babel-loader for transpilation)
@@ -33,4 +34,4 @@ npm run build
 
 ## Licence
 
-Copyright © 2014- [John Reilly](twitter.com/johnny_reilly). This project is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).
+Copyright © 2016- [John Reilly](twitter.com/johnny_reilly). This project is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).

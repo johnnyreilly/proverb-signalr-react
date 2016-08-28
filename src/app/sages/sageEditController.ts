@@ -28,11 +28,11 @@ export class SageEditController {
     constructor(
         private $location: ng.ILocationService,
         private $stateParams: SageEditRouteParams,
-        public  $scope: SageEditScope,
+        public $scope: SageEditScope,
         private modalDialog: ModalDialogService,
         private common: CommonService,
         private datacontext: DataContext
-        ) {
+    ) {
 
         this.dateOfBirthDatePickerIsOpen = false;
         this.errors = new Map();
@@ -92,29 +92,27 @@ export class SageEditController {
         const sageToSave = this.sage.name;
 
         this.common.waiter(this.datacontext.sage.save(this.sage), sageEditControllerName, "Saving " + sageToSave)
-            .then(response => {
-
-                this.log.success("Saved " + sageToSave);
-                this.$location.path("/sages/detail/" + this.sage.id);
-            })
-            .catch(response => {
-
-                if (response.errors) {
-
-                    angular.forEach(response.errors, (errors, field) => {
-                        const model: ng.INgModelController = this.$scope.form[field];
-                        if (model) {
-                            model.$setValidity("server", false);
-                        }
-                        else {
-                            // No screen element to tie failure message to so pop a toast
-                            this.log.error(errors);
-                        }
-                        this.errors.set(field, errors.join(","));
-                    });
+            .then(saveResult => {
+                if (saveResult.isSaved) {
+                    this.log.success("Saved " + sageToSave);
+                    this.$location.path("/sages/detail/" + this.sage.id);
                 }
                 else {
-                    this.log.error("Failed to save " + sageToSave, response);
+                    if (saveResult.validations.hasErrors) {
+                        angular.forEach(saveResult.validations.errors, (errors, field) => {
+                            const model: ng.INgModelController = this.$scope.form[field];
+                            if (model) {
+                                model.$setValidity("server", false);
+                            }
+                            else {
+                                // No screen element to tie failure message to so pop a toast
+                                this.log.error(errors.join(","));
+                            }
+                            this.errors.set(field, errors.join(","));
+                        });
+                    }
+
+                    this.log.error("Failed to save sage", saveResult);
                 }
             })
             .finally(() => this._isSavingOrRemoving = false);

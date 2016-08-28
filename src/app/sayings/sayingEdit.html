@@ -25,14 +25,14 @@
                             <label class="col-xs-12 col-sm-2">Saying</label>
                             <div class="col-xs-12 col-sm-9">
                                 <textarea class="form-control" rows="5"
-                                          name="saying.text" ng-model="vm.saying.text" server-error="vm.errors"></textarea>
+                                          name="text" ng-model="vm.saying.text" server-error="vm.errors"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-xs-12 col-sm-2">Sage</label>
                             <div class="col-xs-12 col-sm-9">
                                 <select class="form-control"
-                                        name="saying.sageId" ng-model="vm.saying.sage"
+                                        name="sageId" ng-model="vm.saying.sage"
                                         ng-options="sage.name for sage in vm.sages"
                                         server-error="vm.errors"></select>
                             </div>

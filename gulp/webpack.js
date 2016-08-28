@@ -20,7 +20,8 @@ function buildProduction(done) {
     myProdConfig.plugins = myProdConfig.plugins.concat(
       new webpack.DefinePlugin({
           __IN_DEBUG__: false,
-          __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now())
+          __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now()),
+          __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net/')
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.[hash].js' }),
       new webpack.optimize.DedupePlugin(),
@@ -48,7 +49,9 @@ function createDevCompiler() {
     myDevConfig.plugins = myDevConfig.plugins.concat(
       new webpack.DefinePlugin({
           __IN_DEBUG__: true,
-          __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now())
+          __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now()),
+          // __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net/')
+          __CONNECTION_URL__: JSON.stringify('http://localhost:7778/')
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js' }),
       new WebpackNotifierPlugin({ title: 'Webpack build', excludeWarnings: true })

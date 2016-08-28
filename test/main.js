@@ -1,5 +1,6 @@
 ﻿/* eslint-disable */
 import 'babel-polyfill';
+import 'jquery';
 import 'angular';
 import 'angular-mocks';
 

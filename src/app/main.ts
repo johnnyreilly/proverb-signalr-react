@@ -1,8 +1,11 @@
 import "babel-polyfill";
 import { initialiseApp, startApp } from "./app";
-import $ from "jquery";
 
 // Load startup data from the server
-$.getJSON("//proverb.azurewebsites.net/Startup")
-// $.getJSON("http://localhost:7778/Startup")
-    .then(startUpData => startApp(initialiseApp(startUpData)));
+startApp(initialiseApp({
+    appName: "Proverb",
+    appRoot: __CONNECTION_URL__,
+    inDebug: __IN_DEBUG__,
+    remoteServiceRoot: __CONNECTION_URL__,
+    version: __VERSION__
+}));

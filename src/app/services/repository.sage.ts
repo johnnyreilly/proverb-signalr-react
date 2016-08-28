@@ -4,6 +4,8 @@ import { commonServiceName, CommonService } from "../common/common";
 import { configName, Config } from "../typesAndInterfaces/config";
 import { LoggerFunction } from "../common/logger";
 import { Saying } from "./repository.saying";
+import { connectionServiceName, ConnectionService } from "./connection";
+import { SaveResult } from "../typesAndInterfaces/saveResult";
 
 export interface Sage {
     id: number;
@@ -19,24 +21,28 @@ export const repositorySageServiceName = "repository.sage";
 export class RepositorySageService {
 
     log: LoggerFunction;
-    rootUrl: string;
+    proxy: SignalR.Hub.Proxy;
     cache: Map<number, Sage>;
 
-    static $inject = ["$http", commonServiceName, configName, "moment"];
-    constructor(private $http: ng.IHttpService, private common: CommonService, private config: Config, private moment: typeof Moment) {
+    static $inject = [commonServiceName, configName, "moment", connectionServiceName];
+    constructor(private common: CommonService, private config: Config, private moment: typeof Moment, private connectionService: ConnectionService) {
         this.log = common.logger.getLogFn(repositorySageServiceName);
-        this.rootUrl = config.remoteServiceRoot + "sage";
+        this.proxy = connectionService.connection.createHubProxy("SageHub");
+        this.proxy.on("getAllCalled", (name, message) => {
+            this.log(name + " " + message);
+        });
         this.cache = new Map();
     }
 
     getAll() {
-        return this.$http.get<Sage[]>(this.rootUrl).then(response => {
-            const sages = response.data.map(sage => {
-                sage.dateOfBirth = this.moment(sage.dateOfBirth).toDate();
-                return sage;
-            });
-            this.log(sages.length + " Sages loaded");
-            return sages;
+        return this.common.$q<Sage[]>((resolve, reject) => {
+            this.connectionService.connection.start().done(() => {
+                this.proxy.invoke("GetAll").then((data: Sage[]) => {
+                    const sages = data;
+                    this.log(sages.length + " Sages loaded");
+                    resolve(sages);
+                }).fail(reject);
+            }).fail(reject);
         });
     }
 
@@ -50,28 +56,42 @@ export class RepositorySageService {
             }
         }
 
-        return this.$http.get<Sage>(this.rootUrl + "/" + id).then(response => {
-            sage = response.data;
-            sage.dateOfBirth = this.moment(sage.dateOfBirth).toDate();
-            this.cache.set(sage.id, sage);
-            this.log("Sage " + sage.name + " [id: " + sage.id + "] loaded");
-            return sage;
+        return this.common.$q<Sage>((resolve, reject) => {
+            this.connectionService.connection.start().done(() => {
+                this.proxy.invoke("Get", { id }).then((data: Sage) => {
+                    sage = data;
+                    sage.dateOfBirth = this.moment(sage.dateOfBirth).toDate();
+                    this.cache.set(sage.id, sage);
+                    this.log("Sage " + sage.name + " [id: " + sage.id + "] loaded");
+                    resolve(sage);
+                }).fail(reject);
+            }).fail(reject);
         });
     }
 
     remove(id: number) {
-        return this.$http.delete<void>(this.rootUrl + "/" + id).then(response => {
-            this.log("Sage [id: " + id + "] removed");
-
-            return response.data;
-        }, errorReason => this.common.$q.reject(errorReason.data));
+        return this.common.$q<void>((resolve, reject) => {
+            this.connectionService.connection.start().done(() => {
+                this.proxy.invoke("Remove", { id })
+                    .then(data => {
+                        this.log("Sage [id: " + id + "] removed");
+                        resolve(data);
+                    })
+                    .fail(reject);
+            }).fail(reject);
+        });
     }
 
     save(sage: Sage) {
-        return this.$http.post<void>(this.rootUrl, sage).then(response => {
-            this.log("Sage " + sage.name + " [id: " + sage.id + "] saved");
-
-            return response.data;
-        }, errorReason => this.common.$q.reject(errorReason.data));
+        return this.common.$q<SaveResult>((resolve, reject) => {
+            this.connectionService.connection.start().done(() => {
+                this.proxy.invoke("Save", { sage })
+                    .then((saveResult: SaveResult) => {
+                        this.log(`Sage ${ saveResult.isSaved ? `[id: ${ saveResult.savedId }] saved` : "save failed" }`);
+                        resolve(saveResult);
+                    })
+                    .fail(reject);
+            }).fail(reject);
+        });
     }
 }

@@ -11,6 +11,7 @@ import { shellComponentName, shellComponent } from "./layout/shellComponent";
 import { sidebarComponentName, sidebarComponent } from "./layout/sidebarComponent";
 import { topnavComponentName, topnavComponent } from "./layout/topnavComponent";
 import { waiterComponentName, waiterComponent } from "./layout/waiterComponent";
+import { connectionServiceName, ConnectionService } from "./services/connection";
 import { datacontextName, datacontextServiceFactory } from "./services/datacontext";
 import { repositoriesName, repositoriesServiceFactory } from "./services/repositories";
 import { repositorySageServiceName, RepositorySageService } from "./services/repository.sage";
@@ -51,6 +52,7 @@ function createApp() {
     .controller(sayingEditControllerName, SayingEditController)
     .controller(aboutControllerName, AboutController)
 
+    .service(connectionServiceName, ConnectionService)
     .factory(datacontextName, datacontextServiceFactory)
     .factory(repositoriesName, repositoriesServiceFactory)
     .service(repositorySageServiceName, RepositorySageService)

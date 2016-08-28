@@ -1,7 +1,8 @@
 ﻿import { initialiseApp } from "../../../src/app/app";
-import { Common } from "../../../src/app/common/common";
+import { CommonService } from "../../../src/app/common/common";
 import { SageEditRouteParams, sageEditControllerName, SageEditController } from "../../../src/app/sages/sageEditController";
 import { DataContext } from "../../../src/app/services/datacontext";
+import { SaveResult } from "../../../src/app/typesAndInterfaces/SaveResult";
 import { Sage } from "../../../src/app/services/repository.sage";
 import { getStubConfig } from "../mocksAndStubs";
 
@@ -17,7 +18,7 @@ function getInjectable() {
     let getById_deferred: ng.IDeferred<Sage>; // deferred used for promises
     let $location: ng.ILocationService;
     let $stateParams: SageEditRouteParams;
-    let common: Common;
+    let common: CommonService;
     let datacontext: DataContext; // controller dependencies
     let sageEditController: SageEditController; // the controller
 
@@ -26,7 +27,7 @@ function getInjectable() {
         _$location_: ng.ILocationService,
         _$rootScope_: ng.IRootScopeService,
         _$q_: ng.IQService,
-        _common_: Common,
+        _common_: CommonService,
         _datacontext_: DataContext
     ) => {
         $controller = _$controller_;
@@ -50,8 +51,10 @@ function getInjectable() {
         });
     });
 
-    return { $controller, $scope, $location, $stateParams, common, datacontext,
-        getById_deferred, $rootScope, $q };
+    return {
+        $controller, $scope, $location, $stateParams, common, datacontext,
+        getById_deferred, $rootScope, $q
+    };
 }
 
 function getController($controller: ng.IControllerService, dependencies: {}) {
@@ -119,7 +122,7 @@ describe("Controllers", () => {
                     getById_deferred, $rootScope, $q } = getInjectable();
                 const sage_stub = getSageStub();
 
-                const save_deferred = $q.defer();
+                const save_deferred = $q.defer<SaveResult>();
 
                 spyOn(datacontext.sage, "save").and.returnValue(save_deferred.promise);
                 spyOn(common, "waiter").and.callThrough();
@@ -140,7 +143,7 @@ describe("Controllers", () => {
 
             it("serverErrors should be wiped", () => {
                 const { controller } = getSaveController();
-                controller.errors = new Map([[ "errors", "aplenty" ]]);
+                controller.errors = new Map([["errors", "aplenty"]]);
                 controller.save();
                 expect(controller.errors.entries.length).toBe(0);
             });
@@ -161,7 +164,7 @@ describe("Controllers", () => {
                 const { controller, save_deferred, $rootScope, $location, sage_stub } = getSaveController();
                 controller.save();
 
-                save_deferred.resolve();
+                save_deferred.resolve({ isSaved: true, savedId: sage_stub.id });
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
                 expect(controller.log.success).toHaveBeenCalledWith("Saved " + sage_stub.name);
@@ -170,31 +173,35 @@ describe("Controllers", () => {
 
             it("should log failure to save", () => {
                 const { controller, save_deferred, $rootScope, sage_stub } = getSaveController();
-                let reject = {};
+                let failedSave = { isSaved: false, validations: { hasErrors: true, errors: {} as { [key: string]: string[] } } };
 
                 controller.save();
 
-                save_deferred.reject(reject);
+                save_deferred.resolve(failedSave);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(controller.log.error).toHaveBeenCalledWith("Failed to save " + sage_stub.name, reject);
+                expect(controller.log.error).toHaveBeenCalledWith("Failed to save sage", failedSave);
             });
 
             it("should log failure to save by field name", () => {
                 const { controller, save_deferred, $rootScope } = getSaveController();
                 controller.$scope.form = <ng.IFormController>{};
-                let reject = {
-                    errors: {
-                        "sage.userName": ["I'm a validation", "Me too"]
+                let failedSave = {
+                    isSaved: false,
+                    validations: {
+                        hasErrors: true,
+                        errors: {
+                            "sage.userName": ["I'm a validation", "Me too"]
+                        } as { [key: string]: string[] }
                     }
                 };
 
                 controller.save();
 
-                save_deferred.reject(reject);
+                save_deferred.resolve(failedSave);
                 $rootScope.$digest(); // So Angular processes the resolved promise
 
-                expect(controller.log.error).toHaveBeenCalledWith(reject.errors["sage.userName"]);
+                expect(controller.log.error).toHaveBeenCalledWith(failedSave.validations.errors["sage.userName"].join(","));
                 expect(controller.errors).toEqual(new Map([
                     ["sage.userName", "I'm a validation,Me too"]
                 ]));

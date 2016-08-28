@@ -83,7 +83,7 @@ function configureHttpProvider(app: ng.IModule) {
                 // so that the version in templateCache is served.  If we tweak the URL then it will not be found
                 const cachedAlready = $templateCache.get(requestConfig.url);
                 if (!cachedAlready) {
-                    requestConfig.url = config.appRoot + requestConfig.url + config.urlCacheBusterSuffix;
+                    requestConfig.url = /*config.appRoot +*/ requestConfig.url + config.urlCacheBusterSuffix;
                 }
 
                 let i = 2;

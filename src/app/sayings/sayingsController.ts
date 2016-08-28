@@ -71,13 +71,13 @@ export class SayingsController {
     }
 
     selectedSageChange() {
-        this.$location.search("sageId", this.selectedSage.id);
+        this.$location.search("sageId", this.selectedSage ? this.selectedSage.id : undefined);
     }
 
     // Instance methods
 
     bySelectedSage = (saying: Saying) => {
         if (!this.selectedSage) { return true; }
-        return saying.sage === this.selectedSage;
+        return saying.sageId === this.selectedSage.id;
     }
 }

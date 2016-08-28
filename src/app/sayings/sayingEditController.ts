@@ -33,7 +33,7 @@ export class SayingEditController {
         private bsDialog: ModalDialogService,
         private common: CommonService,
         private datacontext: DataContext
-        ) {
+    ) {
 
         this.errors = new Map();
         this.log = common.logger.getLoggers(sayingEditControllerName);
@@ -109,29 +109,26 @@ export class SayingEditController {
         sayingToSave.sage = null;
 
         this.common.waiter(this.datacontext.saying.save(sayingToSave), sayingEditControllerName, "Saving saying")
-            .then(sayingId => {
-
-                this.log.success("Saved saying");
-                this.$location.path("/sayings/").search("sageId", sayingToSave.sageId);
-            })
-            .catch(response => {
-
-                if (response.errors) {
-
-                    angular.forEach(response.errors, (errors, field) => {
-                        const model: ng.INgModelController = this.$scope.form[field];
-                        if (model) {
-                            model.$setValidity("server", false);
-                        }
-                        else {
-                            // No screen element to tie failure message to so pop a toast
-                            this.log.error(errors);
-                        }
-                        this.errors.set(field, errors.join(","));
-                    });
+            .then(saveResult => {
+                if (saveResult.isSaved) {
+                    this.log.success("Saved saying");
+                    this.$location.path("/sayings/").search("sageId", sayingToSave.sageId);
                 }
                 else {
-                    this.log.error("Failed to save saying", response);
+                    if (saveResult.validations.hasErrors) {
+                        angular.forEach(saveResult.validations.errors, (errors, field) => {
+                            const model: ng.INgModelController = this.$scope.form[field];
+                            if (model) {
+                                model.$setValidity("server", false);
+                            }
+                            else {
+                                // No screen element to tie failure message to so pop a toast
+                                this.log.error(errors.join(","));
+                            }
+                            this.errors.set(field, errors.join(","));
+                        });
+                    }
+                    this.log.error("Failed to save saying", saveResult);
                 }
             })
             .finally(() => this._isSavingOrRemoving = false);
