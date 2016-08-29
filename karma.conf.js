@@ -29,14 +29,7 @@ module.exports = function(config) {
       devtool: 'inline-source-map',
       debug: true,
       module: {
-          loaders: webpackConfig.module.loaders,
-          postLoaders: [ { //delays coverage til after tests are run, fixing transpiled source coverage error
-            test: /\.ts(x?)$/,
-            exclude: [
-                path.resolve('test/'),
-                path.resolve('node_modules/')
-            ],
-            loader: 'istanbul-instrumenter' } ]
+          loaders: webpackConfig.module.loaders
       },
       plugins: [
         new webpack.ProvidePlugin({

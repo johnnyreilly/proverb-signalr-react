@@ -9,7 +9,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 
-var src = './src/styles/styles.less';
+var src = './styles/main.less';
 var dest = './dist/styles';
 
 function compile(options) {

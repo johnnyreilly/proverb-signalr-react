@@ -8,16 +8,18 @@ var packageJson = require('./package.json');
 module.exports = {
   cache: true,
   entry: {
-    main: './src/app/main.ts',
-
-    // common dependencies bundled together packaged with CommonsChunkPlugin in gulp/webpack.js
+    main: './src/main.tsx',
     vendor: [
       'babel-polyfill',
       'jquery',
-      'angular',
-      'angular-animate',
-      'angular-ui-bootstrap',
-      'angular-ui-router'
+      'moment',
+      'events',
+      'flux',
+      'react',
+      'react-dom',
+      'react-router',
+      'signalr',
+      'toastr'
     ]
   },
   output: {
@@ -29,18 +31,14 @@ module.exports = {
     loaders: [{
       test: /\.ts(x?)$/,
       exclude: /node_modules/,
-      loader: 'babel-loader?presets[]=es2015!ts-loader'
+      loader: 'babel-loader?presets[]=es2015&presets[]=react!ts-loader'
     }, {
       test: /\.js$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
-        presets: ['es2015']
+        presets: ['es2015', 'react']
       }
-    }, {
-      test: /\.html$/,
-      exclude: /node_modules/,
-      loader: 'raw'
     }]
   },
   plugins: [ // Check gulp/webpack.js for build specific plugins

@@ -6,9 +6,9 @@ var glob = require('glob');
 
 function injectIndex(options) {
   function run() {
-    var target = gulp.src('./src/index.html');
+    var target = gulp.src('./index.html');
     var sources = gulp.src([
-      './dist/styles/styles*.css',
+      './dist/styles/main*.css',
       './dist/scripts/vendor*.js',
       './dist/scripts/main*.js'
     ], { read: false });
@@ -22,7 +22,7 @@ function injectIndex(options) {
 
   function checkForInitialFilesThenRun() {
     glob(jsCssGlob, function (er, files) {
-      var filesWeNeed = ['dist/scripts/main', 'dist/scripts/vendor', 'dist/styles/styles'];
+      var filesWeNeed = ['dist/scripts/main', 'dist/scripts/vendor', 'dist/styles/main'];
 
       function fileIsPresent(fileWeNeed) {
         return files.some(function(file) {
