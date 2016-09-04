@@ -7,13 +7,13 @@ interface Props {
 }
 
 class Greeting extends React.Component<Props, any> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   static propTypes: React.ValidationMap<Props> = {
     targetOfGreeting: React.PropTypes.string.isRequired
   };
+
+  constructor(props: Props) {
+    super(props);
+  }
 
   render() {
     return (

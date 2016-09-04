@@ -1,4 +1,8 @@
 {
+    "extends": [
+        "tslint:recommended",
+        "tslint-react"
+    ],
     "rules": {
         "class-name": true,
         "comment-format": [
@@ -9,16 +13,29 @@
             true,
             "spaces"
         ],
+        "interface-name": [false],
+        "jsx-alignment": false,
+        "jsx-no-lambda": true,
+        "jsx-no-multiline-js": true,
+        "jsx-no-string-ref": true,
+        "jsx-self-close": true,
+        "max-line-length": [false],
+        "member-access": false,
         "no-duplicate-variable": true,
         "no-eval": true,
         "no-internal-module": true,
         "no-trailing-whitespace": true,
+        "no-unused-variable": [
+            true, "react"
+        ],
         "no-var-keyword": true,
+        "object-literal-sort-keys": false,
         "one-line": [
             true,
             "check-open-brace",
             "check-whitespace"
         ],
+        "ordered-imports": false,
         "quotemark": [
             true,
             "double",
@@ -28,6 +45,8 @@
             true,
             "always"
         ],
+        "switch-default": false,
+        "trailing-comma": [false],
         "triple-equals": [
             true,
             "allow-null-check"

@@ -1,6 +1,5 @@
 import React from "react";
 import GreetingStore from "../../stores/GreetingStore";
-import * as GreetingActions from "../../actions/GreetingActions";
 import GreetingState from "../../types/GreetingState";
 import WhoToGreet from "./WhoToGreet";
 import Greeting from "./Greeting";

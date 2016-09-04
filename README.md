@@ -1,4 +1,4 @@
-# Proverb Angular
+# Proverb React
 
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/johnnyreilly/proverb-signalr-react?svg=true)](https://ci.appveyor.com/project/JohnReilly/proverb-signalr-react) [![TypeScript definitions on DefinitelyTyped](http://definitelytyped.org/badges/standard-flat.svg)](http://definitelytyped.org)
 

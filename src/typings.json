@@ -1,5 +1,5 @@
 {
-  "name": "poor-clares-arundel",
+  "name": "proverb-signalr-react",
   "version": false,
   "globalDependencies": {
     "define-plugin-variables": "file:../typings-local/define-plugin-variables.d.ts",
