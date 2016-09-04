@@ -6,7 +6,7 @@ var cache = require('gulp-cached');
 var targets = [
   { description: 'font-awesome-fonts', src: './node_modules/font-awesome/fonts/**/*.*', dest: './dist/fonts' },
   { description: 'bootstrap-fonts', src: './node_modules/bootstrap/fonts/**/*.*', dest: './dist/fonts' },
-  { description: 'static', src: './src/static/**/*.*', dest: './dist/static' }
+  { description: 'static', src: './static/**/*.*', dest: './dist' }
 ];
 
 function copy(options) {

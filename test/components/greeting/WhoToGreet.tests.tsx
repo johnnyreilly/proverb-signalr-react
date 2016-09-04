@@ -1,7 +1,7 @@
 import React from "react";
 import * as TestUtils from "react-addons-test-utils";
-import WhoToGreet from "../../src/components/WhoToGreet";
-import * as GreetingActions from "../../src/actions/GreetingActions";
+import WhoToGreet from "../../../src/components/Greeting/WhoToGreet";
+import * as GreetingActions from "../../../src/actions/GreetingActions";
 
 describe("WhoToGreet", () => {
   let handleSelectionChangeSpy: jasmine.Spy;

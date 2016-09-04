@@ -10,8 +10,9 @@
     "jquery": "registry:dt/jquery#1.10.0+20160701124751",
     "react": "registry:dt/react#0.14.0+20160817201227",
     "react-addons-test-utils": "registry:dt/react-addons-test-utils#0.14.0+20160427035638",
+    "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160806072414",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
-    "react-router": "registry:dt/react-router#2.0.0+20160813233016",
+    "react-router": "registry:dt/react-router#2.0.0+20160828232736",
     "react-router/history": "registry:dt/react-router/history#2.0.0+20160608102730",
     "toastr": "registry:dt/toastr#2.1.1+20160510010435"
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import * as GreetingActions from "../actions/GreetingActions";
+import * as GreetingActions from "../../actions/GreetingActions";
 
 interface Props {
   newGreeting: string;

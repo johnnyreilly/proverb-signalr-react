@@ -1,6 +1,12 @@
 import "babel-polyfill";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App";
+import { Router, hashHistory } from "react-router";
 
-ReactDOM.render(<App />, document.getElementById("content"));
+import { getRoutes } from "./Routes";
+
+ReactDOM.render((
+  <Router history={hashHistory}>
+    { getRoutes() }
+  </Router>
+), document.getElementById("content"));
