@@ -64,7 +64,9 @@ gulp.task('tslint', function () {
       .pipe(tslint({
           formatter: "verbose"
       }))
-      .pipe(tslint.report())
+      .pipe(tslint.report({
+          emitError: false
+      }))
 });
 
 gulp.task('watch', ['delete-dist-contents'], function (done) {
