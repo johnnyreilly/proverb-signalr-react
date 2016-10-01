@@ -1,5 +1,5 @@
 import React from "react";
-import navbarInstance from "./NavBar";
+import TopNav from "./TopNav";
 import { RouteComponentProps } from "react-router";
 
 interface Props extends RouteComponentProps<{
@@ -13,7 +13,7 @@ class App extends React.Component<Props, any> {
   render() {
     return (
       <div>
-        { navbarInstance }
+        <TopNav path={ this.props.location.pathname } routes={ this.props.routes } />
         { this.props.children }
       </div>
     );

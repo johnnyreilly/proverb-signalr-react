@@ -8,10 +8,6 @@ var failPlugin = require('webpack-fail-plugin');
 var webpackConfig = require('../webpack.config.js');
 var packageJson = require('../package.json');
 
-function getCommonChunks() {
-  return new webpack.optimize.CommonsChunkPlugin({ names: commonChunks });
-}
-
 function buildProduction(done) {
     // modify some webpack config options
     var myProdConfig = Object.create(webpackConfig);
@@ -21,7 +17,7 @@ function buildProduction(done) {
       new webpack.DefinePlugin({
           __IN_DEBUG__: false,
           __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now()),
-          __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net/'),
+          __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net'),
           'process.env': {
               'NODE_ENV': JSON.stringify('production')
           }
@@ -53,8 +49,8 @@ function createDevCompiler() {
       new webpack.DefinePlugin({
           __IN_DEBUG__: true,
           __VERSION__: JSON.stringify(packageJson.version + '.' + Date.now()),
-          // __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net/')
-          __CONNECTION_URL__: JSON.stringify('http://localhost:7778/')
+        //   __CONNECTION_URL__: JSON.stringify('//proverbsignalr.azurewebsites.net')
+          __CONNECTION_URL__: JSON.stringify('http://localhost:7778')
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js' }),
       new WebpackNotifierPlugin({ title: 'Webpack build', excludeWarnings: true })

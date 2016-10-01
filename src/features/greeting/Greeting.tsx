@@ -1,5 +1,5 @@
 import React from "react";
-import * as GreetingActions from "../../actions/GreetingActions";
+import * as GreetingActions from "../../shared/actions/GreetingActions";
 
 interface Props {
   key: number;
@@ -17,7 +17,7 @@ class Greeting extends React.Component<Props, any> {
 
   render() {
     return (
-      <p>
+      <p style={{ color: "pink" }}>
         Hello { this.props.targetOfGreeting }!
 
         <button className="btn btn-default btn-danger"

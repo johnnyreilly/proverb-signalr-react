@@ -1,10 +1,10 @@
 import React from "react";
 import * as TestUtils from "react-addons-test-utils";
-import App from "../../../src/components/greeting/Page";
-import WhoToGreet from "../../../src/components/greeting/WhoToGreet";
-import Greeting from "../../../src/components/greeting/Greeting";
-import GreetingStore from "../../../src/stores/GreetingStore";
-import GreetingState from "../../../src/types/GreetingState";
+import App from "../../../src/features/greeting/Page";
+import WhoToGreet from "../../../src/features/greeting/WhoToGreet";
+import Greeting from "../../../src/features/greeting/Greeting";
+import GreetingStore from "../../../src/shared/stores/GreetingStore";
+import GreetingState from "../../../src/shared/types/GreetingState";
 
 describe("App", () => {
   it("renders expected HTML", () => {

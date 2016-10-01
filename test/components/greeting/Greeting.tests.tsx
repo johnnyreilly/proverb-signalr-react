@@ -1,12 +1,21 @@
 import React from "react";
 import * as TestUtils from "react-addons-test-utils";
-import Greeting from "../../../src/components/greeting/Greeting";
-import * as GreetingActions from "../../../src/actions/GreetingActions";
+import Greeting from "../../../src/features/greeting/Greeting";
+import * as GreetingActions from "../../../src/shared/actions/GreetingActions";
 
 describe("Greeting", () => {
   let handleSelectionChangeSpy: jasmine.Spy;
   beforeEach(() => {
     handleSelectionChangeSpy = jasmine.createSpy("handleSelectionChange");
+  });
+
+  it("Array.prototype.includes works", () => {
+    const result = [1, 2, 3].includes(2);
+    expect(result).toBe(true);
+  });
+
+  it("Exponentiation operator works", () => {
+    expect(1 ** 2 === Math.pow(1, 2)).toBe(true);
   });
 
   it("given a targetOfGreeting of \'James\' it renders a p containing a greeting and a remove button", () => {

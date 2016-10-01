@@ -1,6 +1,6 @@
 import React from "react";
-import GreetingStore from "../../stores/GreetingStore";
-import GreetingState from "../../types/GreetingState";
+import GreetingStore from "../../shared/stores/GreetingStore";
+import GreetingState from "../../shared/types/GreetingState";
 import WhoToGreet from "./WhoToGreet";
 import Greeting from "./Greeting";
 

@@ -3,7 +3,6 @@
 
 var path = require('path');
 var webpack = require('webpack');
-var packageJson = require('./package.json');
 
 module.exports = {
   cache: true,
@@ -13,11 +12,13 @@ module.exports = {
       'babel-polyfill',
       'jquery',
       'moment',
-      'events',
+      'fbemitter',
       'flux',
       'react',
       'react-dom',
+      'react-bootstrap',
       'react-router',
+      'react-router-bootstrap',
       'signalr',
       'toastr'
     ]
@@ -31,13 +32,13 @@ module.exports = {
     loaders: [{
       test: /\.ts(x?)$/,
       exclude: /node_modules/,
-      loader: 'babel-loader?presets[]=es2015&presets[]=react!ts-loader'
+      loader: 'babel-loader?presets[]=es2016&presets[]=es2015&presets[]=react!ts-loader'
     }, {
       test: /\.js$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
-        presets: ['es2015', 'react']
+        presets: ['es2016', 'es2015', 'react']
       }
     }]
   },

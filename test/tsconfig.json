@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "es2015", "es2016"],
     "jsx": "preserve",
     "module": "es2015",
     "moduleResolution": "node",
@@ -11,8 +12,5 @@
     "removeComments": false,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es2015"
-  },
-  "atom": {
-    "rewriteTsconfig": true
   }
 }

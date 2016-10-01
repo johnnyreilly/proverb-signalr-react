@@ -1,25 +1,25 @@
 import React from "react";
-import * as GreetingActions from "../../actions/GreetingActions";
+import * as GreetingActions from "../../shared/actions/GreetingActions";
 
 interface Props {
   newGreeting: string;
 }
 
 class WhoToGreet extends React.Component<Props, any> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   static propTypes: React.ValidationMap<Props> = {
     newGreeting: React.PropTypes.string.isRequired
   };
+
+  constructor(props: Props) {
+    super(props);
+  }
 
   render() {
     return (
       <form role="form">
         <div className="form-group">
           <input type="text" className="form-control" placeholder="Who would you like to greet?"
-            value={ this.props.newGreeting }
+            value={ this.props.newGreeting } style={{ color: "#FF69B4"}}
             onChange={ this._handleNewGreetingChange } />
           <button type="submit" className="btn btn-default btn-primary"
             onClick={ this._onSubmit }

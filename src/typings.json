@@ -12,6 +12,7 @@
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
     "react-router": "registry:dt/react-router#2.0.0+20160828232736",
     "react-router/history": "registry:dt/react-router/history#2.0.0+20160608102730",
+    "react-router-bootstrap": "registry:dt/react-router-bootstrap#0.0.0+20160316155526",
     "signalr": "registry:dt/signalr#2.2.0+20160509082439",
     "toastr": "registry:dt/toastr#2.1.1+20160510010435"
   }
