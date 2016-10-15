@@ -16,8 +16,10 @@ export class SageHub {
         this.logger = getLogger(hubName);
         this.connection = getConnection();
         this.proxy = this.connection.createHubProxy(hubName);
-        this.proxy.on("getAllCalled", (name, message) => {
-            console.log(name + " " + message); // tslint:disable-line
+        this.proxy.on("getAllCalled", (name, message) => this.logger.info(name + " " + message));
+        this.proxy.on("sagesUpdated", (sages) => {
+            this.logger.info("sages updated", sages);
+            loadedSages(sages);
         });
     }
 

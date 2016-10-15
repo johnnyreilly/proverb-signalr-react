@@ -16,9 +16,7 @@ export class SayingHub {
         this.logger = getLogger(hubName);
         this.connection = getConnection();
         this.proxy = this.connection.createHubProxy(hubName);
-        this.proxy.on("getAllCalled", (name, message) => {
-            console.log(name + " " + message); // tslint:disable-line
-        });
+        this.proxy.on("getAllCalled", (name, message) => this.logger.info(name + " " + message));
     }
 
     getAll() {
