@@ -101,6 +101,7 @@ dist
 
 # Karma test results
 test-results
+reports
 
 # Windows Azure Build Output
 csx

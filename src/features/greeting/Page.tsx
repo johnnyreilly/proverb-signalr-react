@@ -1,4 +1,5 @@
 import React from "react";
+import FBEmitter from "fbemitter";
 import GreetingStore from "../../shared/stores/GreetingStore";
 import GreetingState from "../../shared/types/GreetingState";
 import WhoToGreet from "./WhoToGreet";

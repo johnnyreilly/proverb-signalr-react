@@ -35,12 +35,12 @@ class WhoToGreet extends React.Component<Props, any> {
     return !this.props.newGreeting;
   }
 
-  _handleNewGreetingChange = (event: React.FormEvent) => {
+  _handleNewGreetingChange = (event: React.FormEvent<any>) => {
     const newGreeting = (event.target as HTMLInputElement).value;
     GreetingActions.newGreetingChanged(newGreeting);
   }
 
-  _onSubmit = (event: React.FormEvent) => {
+  _onSubmit = (event: React.FormEvent<any>) => {
     event.preventDefault();
 
     if (!this._preventSubmission) {

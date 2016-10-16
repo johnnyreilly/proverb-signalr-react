@@ -59,7 +59,7 @@ describe("WhoToGreet", () => {
     expect(GreetingActions.addGreeting).toHaveBeenCalledWith(newGreeting);
   });
 
-  function render({ newGreeting }) {
+  function render({ newGreeting }: { newGreeting: string }) {
     const shallowRenderer = TestUtils.createRenderer();
     shallowRenderer.render(<WhoToGreet newGreeting={ newGreeting } />);
     return shallowRenderer.getRenderOutput();

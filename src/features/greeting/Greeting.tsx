@@ -28,7 +28,7 @@ class Greeting extends React.Component<Props, any> {
     );
   }
 
-  _onClick = (event: React.MouseEvent) => {
+  _onClick = (event: React.MouseEvent<any>) => {
     GreetingActions.removeGreeting(this.props.targetOfGreeting);
   }
 }

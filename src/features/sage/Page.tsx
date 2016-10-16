@@ -1,4 +1,5 @@
 import React from "react";
+import FBEmitter from "fbemitter";
 import SageStore, { SageState } from "../../shared/stores/sageStore";
 import * as SageActions from "../../shared/actions/sageActions";
 import SageThumbnail from "./SageThumbnail";

@@ -45,7 +45,7 @@ describe("Greeting", () => {
     expect(GreetingActions.removeGreeting).toHaveBeenCalledWith(targetOfGreeting);
   });
 
-  function render({ targetOfGreeting }) {
+  function render({ targetOfGreeting }: { targetOfGreeting: string; }) {
     const shallowRenderer = TestUtils.createRenderer();
     shallowRenderer.render(<Greeting key={ 0 } targetOfGreeting={ targetOfGreeting } />);
     return shallowRenderer.getRenderOutput();
