@@ -24,7 +24,11 @@ function buildProduction(done) {
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.[hash].js' }),
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.UglifyJsPlugin({
+         compress: {
+            warnings: true
+         }
+      }),
       failPlugin
    );
 
@@ -43,7 +47,6 @@ function createDevCompiler() {
    // modify some webpack config options
    var myDevConfig = Object.create(webpackConfig);
    myDevConfig.devtool = 'inline-source-map';
-   myDevConfig.debug = true;
 
    myDevConfig.plugins = myDevConfig.plugins.concat(
       new webpack.DefinePlugin({
@@ -82,13 +85,13 @@ function watch() {
       }, function (err, stats) {
          if (err) {
             if (!firstBuildDone) {
-               firstBuildDone = true; 
+               firstBuildDone = true;
                reject(err);
             }
             throw new gutil.PluginError('webpack:build-dev', err);
          } else {
             if (!firstBuildDone) {
-               firstBuildDone = true; 
+               firstBuildDone = true;
                resolve('webpack built');
             }
          }

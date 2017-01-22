@@ -27,10 +27,8 @@ module.exports = function(config) {
 
     webpack: {
       devtool: 'inline-source-map',
-      debug: true,
-      module: {
-          loaders: webpackConfig.module.loaders
-      },
+      module: webpackConfig.module,
+      resolve: webpackConfig.resolve,
       plugins: [
         new webpack.ProvidePlugin({
            "window.jQuery": "jquery",
